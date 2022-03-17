@@ -1,6 +1,9 @@
 module Main where
 
-import Lib
+import Display
+
 
 main :: IO ()
-main = someFunc
+main = run
+    menu <- readMenu
+    playMenu menu
