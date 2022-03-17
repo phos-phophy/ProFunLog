@@ -6,9 +6,11 @@ cabal-version: 1.12
 
 name:           anki-app
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/phos-phophy/anki-app#readme>
-homepage:       https://github.com/phos-phophy/anki-app#readme
-bug-reports:    https://github.com/phos-phophy/anki-app/issues
+synopsis:       Anki application
+description:    Please see the README on GitHub at <https://github.com/phos-phophy/functional_prog/anki-app#readme>
+category:       Desktop
+homepage:       https://github.com/phos-phophy/functional_prog#readme
+bug-reports:    https://github.com/phos-phophy/functional_prog/issues
 author:         Artem Kudisov
 maintainer:     dark.artbeam@gmail.com
 copyright:      2022 Artem Kudisov
@@ -21,7 +23,8 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/phos-phophy/anki-app
+  location: https://github.com/phos-phophy/functional_prog
+  subdir: anki-app
 
 library
   exposed-modules:
@@ -32,6 +35,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , gloss ==1.13.*
   default-language: Haskell2010
 
 executable anki-app-exe
@@ -44,6 +48,7 @@ executable anki-app-exe
   build-depends:
       anki-app
     , base >=4.7 && <5
+    , gloss ==1.13.*
   default-language: Haskell2010
 
 test-suite anki-app-test
@@ -57,4 +62,5 @@ test-suite anki-app-test
   build-depends:
       anki-app
     , base >=4.7 && <5
+    , gloss ==1.13.*
   default-language: Haskell2010
