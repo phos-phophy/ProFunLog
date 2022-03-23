@@ -1,17 +1,45 @@
 module Graphic where
 
 import Graphics.Gloss.Interface.Pure.Game
-import Menu
+import State
 import Card
-import Time
+
+collectionHeight :: Float
+collectionHeight = 70
+
+collectionWidth :: Float
+collectionWidth = 400
+
+collection_x :: Float
+collection_x = (-collectionWidth / 2) - 20
+
+collection_y :: Float
+collection_y = 400 - (collectionHeight / 2)
 
 
-drawMenu :: Menu -> Picture
-drawMenu translate x y (Pictures [drawList menu, drawSet menu])
+drawState :: State -> Picture
+drawState st = Pictures [drawMenu st, dividingLine, drawSelectedCollection st]
     where
-        x = -fromIntegral (width menu)  / 2
-        y = -fromIntegral (height menu) / 2
+        x = -fromIntegral (width st) / 2
+        y = -fromIntegral (height st) / 2
+        dividingLine = Line [(0, 10000), (0, -10000)]
 
-drawList :: Menu -> Picture
+drawMenu :: State -> Picture
+drawMenu st = Translate 0 (- (cur_y st)) $ Pictures $ map (\(ind, pic) -> Translate 0 (-ind * 80) pic) $ zip indx $ map drawCollection (collections st)
+    where
+        indx = [0..] :: [Float]
 
-drawSet :: Menu -> Picture
+drawCollection :: CardCollection -> Picture
+drawCollection cc = Translate collection_x collection_y $ 
+                              Pictures [rectangleWire collectionWidth collectionHeight, 
+                              Translate (-collectionWidth / 2) (-collectionHeight / 4) $ scale 0.3 0.3 $ color black $ text (name cc), 
+                              Translate (collectionWidth / 2) 0 $ scale 0.2 0.2 $ color red $ text $ show (count cc)]
+
+drawSelectedCollection :: State -> Picture
+drawSelectedCollection st = Line [(0, 0), (0, 100)] 
+
+drawSettingsList :: CardCollection -> Picture  -- edit, remove
+drawSettingsList cs = rectangleWire 10 20
+
+drawCardSettings :: CardCollection -> Picture  -- editing card
+drawCardSettings cs = rectangleWire 10 20

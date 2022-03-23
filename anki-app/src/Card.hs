@@ -1,13 +1,12 @@
 module Card where
 
+import System.Directory
+
 
 data Card = Card
     { word :: String
     , translate :: String
     }
-
-createCard :: String -> String -> Card
-createCard word translate = Card word translate
 
 cardToString :: Card -> String
 cardToString card = (word card) ++ "\t" ++ (translate card) ++ "\n"
@@ -16,27 +15,41 @@ stringToCard :: String -> Card
 stringToCard str = Card (ws !! 0) (ws !! 1) where ws = (wordsWhen (=='\t') str)
 
 
-data CardSet = CardSet 
-    { path :: String
+data CardCollection = CardCollection
+    { name :: String
+    , path :: String
+    , count :: Int  -- num of cards
     , cards :: [Card]
     }
 
-loadCardSet :: CardSet -> IO CardSet
-loadCardSet cs = do
-    strs <- readFile (path cs)
-    return cs{cards = map stringToCard (lines strs)}
+loadCardCollections :: [CardCollection] -> [String] -> IO [CardCollection]
+loadCardCollections ans [] = return ans
+loadCardCollections ans paths = do
+    cc <- load_ $ head paths
+    loadCardCollections (ans ++ [cc]) $ tail paths 
+    where
+        load_ :: String -> IO CardCollection
+        load_ path = do
+            file <- readFile path
+            let ll = lines file
+            let cards = map stringToCard $ (tail ll)
+            return $ CardCollection (head ll) path (length cards) cards            
 
-createCardSet :: String -> CardSet
-createCardSet path = CardSet path []
+createNewCardCollection :: String -> String -> CardCollection
+createNewCardCollection name path = CardCollection name path 0 []
 
-addCardToSet :: CardSet -> Card -> IO CardSet
-addCardToSet cs card = do
-    appendFile (path cs) (cardToString card)
-    return CardSet (path cs) ((cards cs) ++ [card])
+addCardToCollection :: CardCollection -> Card -> IO CardCollection
+addCardToCollection cc card = do
+    appendFile (path cc) (cardToString card)
+    return cc {count = (count cc) + 1, cards = (cards cc) ++ [card]}
 
-removeCardFromSet :: CardSet -> Card -> IO CardSet
+removeCardCollection :: CardCollection -> IO ()
+removeCardCollection cc = removeFile (path cc)
 
-wordsWhen :: (String -> Bool) -> String -> [String]
+removeCardFromCollection :: CardCollection -> Card -> IO CardCollection
+removeCardFromCollection cs c = return cs
+
+wordsWhen :: (Char -> Bool) -> String -> [String]
 wordsWhen p s =  case dropWhile p s of
                       "" -> []
                       s' -> w : wordsWhen p s''

@@ -28,13 +28,17 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Card
+      Display
+      Graphic
+      State
   other-modules:
       Paths_anki_app
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , directory
     , gloss ==1.13.*
   default-language: Haskell2010
 
@@ -48,6 +52,7 @@ executable anki-app-exe
   build-depends:
       anki-app
     , base >=4.7 && <5
+    , directory
     , gloss ==1.13.*
   default-language: Haskell2010
 
@@ -62,5 +67,6 @@ test-suite anki-app-test
   build-depends:
       anki-app
     , base >=4.7 && <5
+    , directory
     , gloss ==1.13.*
   default-language: Haskell2010
