@@ -3,6 +3,19 @@ module Card where
 import System.Directory
 
 
+collectionHeight :: Float
+collectionHeight = 70
+
+collectionWidth :: Float
+collectionWidth = 400
+
+init_x :: Float
+init_x = (-collectionWidth / 2) - 20
+
+init_y :: Float
+init_y = 400
+
+
 data Card = Card
     { word :: String
     , translate :: String
@@ -20,23 +33,25 @@ data CardCollection = CardCollection
     , path :: String
     , count :: Int  -- num of cards
     , cards :: [Card]
+    , x_pos :: Float
+    , y_pos :: Float
     }
 
-loadCardCollections :: [CardCollection] -> [String] -> IO [CardCollection]
-loadCardCollections ans [] = return ans
-loadCardCollections ans paths = do
-    cc <- load_ $ head paths
-    loadCardCollections (ans ++ [cc]) $ tail paths 
-    where
-        load_ :: String -> IO CardCollection
-        load_ path = do
-            file <- readFile path
-            let ll = lines file
-            let cards = map stringToCard $ (tail ll)
-            return $ CardCollection (head ll) path (length cards) cards            
+loadCardCollections :: [CardCollection] -> Float -> [String] -> IO [CardCollection]
+loadCardCollections ans ind [] = return ans
+loadCardCollections ans ind paths = do
+    cc <- load_ ind $ head paths
+    loadCardCollections (ans ++ [cc]) (ind + 1) $ tail paths 
 
-createNewCardCollection :: String -> String -> CardCollection
-createNewCardCollection name path = CardCollection name path 0 []
+load_ :: Float -> String -> IO CardCollection
+load_ ind path = do
+    file <- readFile path
+    let ll = lines file
+    let cards = map stringToCard $ (tail ll)
+    return $ CardCollection (head ll) path (length cards) cards init_x (init_y - ind * 80)
+
+--createNewCardCollection :: State -> String -> String -> CardCollection
+--createNewCardCollection st name path = CardCollection name path 0 []
 
 addCardToCollection :: CardCollection -> Card -> IO CardCollection
 addCardToCollection cc card = do
