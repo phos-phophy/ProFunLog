@@ -1,5 +1,0 @@
-Animals
-cat    кошка
-dog    собака
-elephant    слон
-crocodile    крокодил

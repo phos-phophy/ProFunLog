@@ -28,10 +28,13 @@ source-repository head
 
 library
   exposed-modules:
+      Button
       Card
       Display
       Graphic
+      HandleEvent
       State
+      Utils
   other-modules:
       Paths_anki_app
   hs-source-dirs:
@@ -40,6 +43,7 @@ library
       base >=4.7 && <5
     , directory
     , gloss ==1.13.*
+    , time
   default-language: Haskell2010
 
 executable anki-app-exe
@@ -54,6 +58,7 @@ executable anki-app-exe
     , base >=4.7 && <5
     , directory
     , gloss ==1.13.*
+    , time
   default-language: Haskell2010
 
 test-suite anki-app-test
@@ -69,4 +74,5 @@ test-suite anki-app-test
     , base >=4.7 && <5
     , directory
     , gloss ==1.13.*
+    , time
   default-language: Haskell2010

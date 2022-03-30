@@ -1,4 +1,0 @@
-First
-bird    птица
-tree    дерево
-pool    бассейн

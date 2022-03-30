@@ -2,27 +2,46 @@ module State where
 
 import System.Directory
 import Card
+import Button
+import Utils
 
-
-data Mode = None | AddCardCollection | Learn
-
+data Mode = None | AddCardCollection | Select
+data SubMode = None1 | AddCard Char | Learn Char Int
 
 data State = State
     { path_to_cols :: String
     , collections :: [CardCollection]
+    , erase :: Bool
     , mode :: Mode
+    , submode :: SubMode
     , newCollectionName :: String
-    , selectedCollection :: Maybe CardCollection 
-    , selectedCard :: Maybe Card 
+    , newCardWord :: String
+    , newCardTranslation :: String
+    , selectedCollection :: Maybe CardCollection  
     , width :: Int
     , height :: Int
     , cur_y :: Float
     }
 
+stateUpdate :: Float -> State -> IO State
+stateUpdate _ st = case (erase st, mode st, submode st) of
+    (True, AddCardCollection, _) -> return st {newCollectionName = deleteLast (newCollectionName st)}
+    (True, Select, AddCard 'w') -> return st {newCardWord = deleteLast (newCardWord st)}
+    (True, Select, AddCard 't') -> return st {newCardTranslation = deleteLast (newCardTranslation st)}
+    _ -> return st
+
+
 getState :: String -> IO State
 getState path = do
     files_ <- listDirectory path
     let files = map (\x -> path ++ x) files_
-    cols <- loadCardCollections [] 1 files
-    return State {path_to_cols = path, collections = cols, mode = None, newCollectionName = "", selectedCollection = Nothing, selectedCard = Nothing, width = 1000, height = 1000, cur_y = 0}
+    cols <- loadAllCollections [] 1 files
+    return $ State {path_to_cols = path, collections = cols, mode = None, submode = None1, newCollectionName = "", 
+                    selectedCollection = Nothing, width = 1000, height = 1000, cur_y = 0,
+                    newCardWord = "", newCardTranslation = "", erase = False}
 
+resetState :: State -> State
+resetState st = (resetSubState st) {mode = None, newCollectionName = "", selectedCollection = Nothing}
+
+resetSubState :: State -> State
+resetSubState st = st {submode = None1, newCardTranslation = "", newCardWord = "", erase = False}

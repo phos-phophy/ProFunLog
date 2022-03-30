@@ -1,31 +1,31 @@
 module Card where
 
 import System.Directory
-
-
-collectionHeight :: Float
-collectionHeight = 70
-
-collectionWidth :: Float
-collectionWidth = 400
-
-init_x :: Float
-init_x = (-collectionWidth / 2) - 20
-
-init_y :: Float
-init_y = 400
+import Utils
+import Button
+import Data.Maybe
+import Data.List
 
 
 data Card = Card
     { word :: String
-    , translate :: String
+    , translation :: String
+    , lastLearningTime :: Int
+    , rating :: Int
     }
 
 cardToString :: Card -> String
-cardToString card = (word card) ++ "\t" ++ (translate card) ++ "\n"
+cardToString (Card w t llt r) = w ++ "\t" ++ t ++ "\t" ++ (show llt) ++ "\t" ++ (show r) ++"\n"
 
 stringToCard :: String -> Card
-stringToCard str = Card (ws !! 0) (ws !! 1) where ws = (wordsWhen (=='\t') str)
+stringToCard str = Card (ws !! 0) (ws !! 1) llt r
+    where 
+        ws = (wordsWhen (=='\t') str)
+        llt = read (ws !! 2) :: Int
+        r = read (ws !! 3) :: Int
+
+isNeedToLearn :: Card -> Int -> Bool
+isNeedToLearn (Card w t llt r) curTime = (curTime - llt) >= (r * 2 + 1) * 86400
 
 
 data CardCollection = CardCollection
@@ -33,39 +33,41 @@ data CardCollection = CardCollection
     , path :: String
     , count :: Int  -- num of cards
     , cards :: [Card]
-    , x_pos :: Float
-    , y_pos :: Float
+    , button :: Button
     }
 
-loadCardCollections :: [CardCollection] -> Float -> [String] -> IO [CardCollection]
-loadCardCollections ans ind [] = return ans
-loadCardCollections ans ind paths = do
-    cc <- load_ ind $ head paths
-    loadCardCollections (ans ++ [cc]) (ind + 1) $ tail paths 
+instance Eq CardCollection where
+    CardCollection _ path1 _ _ _ == CardCollection _ path2 _ _ _ = path1 == path2
 
-load_ :: Float -> String -> IO CardCollection
-load_ ind path = do
-    file <- readFile path
-    let ll = lines file
-    let cards = map stringToCard $ (tail ll)
-    return $ CardCollection (head ll) path (length cards) cards init_x (init_y - ind * 80)
+findNextCardToLearn :: CardCollection -> Int -> Int -> Int
+findNextCardToLearn cc@(CardCollection _ _ count cards _) ind curTime
+    | ind == count = -1
+    | isNeedToLearn (cards !! ind) curTime = ind
+    | otherwise = findNextCardToLearn cc (ind + 1) curTime
 
---createNewCardCollection :: State -> String -> String -> CardCollection
---createNewCardCollection st name path = CardCollection name path 0 []
+loadAllCollections :: [CardCollection] -> Float -> [String] -> IO [CardCollection]
+loadAllCollections ans _ [] = return ans
+loadAllCollections ans ind paths = do
+    cc <- loadCollection ind $ head paths
+    loadAllCollections (ans ++ [cc]) (ind + 1) $ tail paths 
 
-addCardToCollection :: CardCollection -> Card -> IO CardCollection
-addCardToCollection cc card = do
-    appendFile (path cc) (cardToString card)
-    return cc {count = (count cc) + 1, cards = (cards cc) ++ [card]}
+loadCollection :: Float -> String -> IO CardCollection
+loadCollection ind path = do
+    (name, cards) <- getCollectionInfo path
+    return $ CardCollection name path (length cards) cards (collectionButton ind)
 
-removeCardCollection :: CardCollection -> IO ()
-removeCardCollection cc = removeFile (path cc)
+reloadCollection :: CardCollection -> IO CardCollection
+reloadCollection cc = do
+    (name, cards) <- getCollectionInfo $ path cc
+    return cc {cards = cards, count = length cards}
 
-removeCardFromCollection :: CardCollection -> Card -> IO CardCollection
-removeCardFromCollection cs c = return cs
+updateCollectionPositions :: [CardCollection] -> [CardCollection]
+updateCollectionPositions cc = zipWith (\c ind -> c {button = collectionButton ind}) cc indx where indx = [1..] :: [Float]
 
-wordsWhen :: (Char -> Bool) -> String -> [String]
-wordsWhen p s =  case dropWhile p s of
-                      "" -> []
-                      s' -> w : wordsWhen p s''
-                            where (w, s'') = break p s'
+getCollectionInfo :: String -> IO (String, [Card])
+getCollectionInfo path = do
+    ll <- readFile path
+    let tmp = lines $ ll 
+    let ans | (head tmp) /= "" = (head tmp, map stringToCard $ tail tmp)
+            | otherwise = ("", [])  -- get rid of lazy
+    return ans
