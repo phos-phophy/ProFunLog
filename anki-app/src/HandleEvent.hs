@@ -8,7 +8,6 @@ import Utils
 import Button
 import Data.List
 import Data.Maybe
-import Data.Time.Clock.POSIX
 
 
 handleEvent :: Event -> State -> IO State
@@ -29,17 +28,20 @@ handleEvent (EventKey (MouseButton WheelUp) _ _ _) st = return st {cur_y = min (
 handleEvent (EventKey (MouseButton LeftButton) Down _ (x, y)) st
     | isUpButton x y = return st {cur_y = 0}
     | isAddButton x y = return $ (resetState st) {mode = AddCardCollection}
-    | isSaveButton st x y = saveCollection st
-    | isSaveCardButton st x y = saveCard st
+    | isSaveButton st x y = saveNewCollection st
+    | isSaveCardButton st x y = saveNewCard st
     | isCancelButton st x y = return $ resetState st
     | isCancelCardButton st x y = return $ resetSubState st
     | isDeleteButton st x y = deleteCollection st
     | isAddCardButton st x y = return $ st {submode = AddCard 'w'}
     | isAddCardWordButton st x y = return $ st {submode = AddCard 'w'}
     | isAddCardTranslationButton st x y = return $ st {submode = AddCard 't'}
-    | isLearnButton st x y = return $ (resetSubState st) {submode = Learn 'w' 0}
+    | isLearnButton st x y = activateLearnSubMode st
     | isStopButton st x y = return $ resetSubState st
     | isShowButton st x y = return $ st {submode = Learn 't' ind}
+    | isEasyButton st x y = nextLearn st 'e'
+    | isNormalButton st x y = nextLearn st 'n'
+    | isHardButton st x y = nextLearn st 'h'
     | otherwise = case (isCollection st x y) of
         Just col -> return $ (resetState st) {mode = Select, selectedCollection = Just col}
         Nothing -> return st
@@ -50,44 +52,54 @@ handleEvent _ st = return st
 
 -- Action functions
 
-saveCollection :: State -> IO State
-saveCollection st = do
-    time <- getPOSIXTime
-    let newName = show $ round time
-    let path = (path_to_cols st) ++ newName  ++ ".txt"
-    writeFile path ((newCollectionName st) ++ "\n")
-    cc <- loadCollection (fromIntegral ((length (collections st)) + 1)) path
+saveNewCollection :: State -> IO State
+saveNewCollection st = do
+    time <- getTime
+    let path = (path_to_cols st) ++ (show time) ++ ".txt"
+    cc <- writeNewCollectionToFile (fromIntegral (length (collections st)) + 1) path (newCollectionName st)
     return $ resetState $ st {collections = (collections st) ++ [cc]}
 
 deleteCollection :: State -> IO State
 deleteCollection st = do
     removeFile $ path $ fromJust $ selectedCollection st
-    let index = fromJust $ elemIndex (fromJust (selectedCollection st)) cc
-    let new_cc = (take index cc) ++ (drop (index + 1) cc)
-    return $ st {collections = updateCollectionPositions new_cc}
+    return $ resetState $ st {collections = updateCollectionPositions (dropByIndex cc index)}
     where
         cc = collections st
+        index = fromJust $ elemIndex (fromJust (selectedCollection st)) cc
 
-saveCard :: State -> IO State
-saveCard st = do
-    time <- getPOSIXTime
-    let card = Card (newCardWord st) (newCardTranslation st) (-1) (round time)
-    appendFile (path (fromJust (selectedCollection st))) $ cardToString card
-    cc <- reloadCollection $ fromJust $ selectedCollection st
+saveNewCard :: State -> IO State
+saveNewCard st = do
+    time <- getTime
+    cc <- addCardToCollection (fromJust (selectedCollection st)) $ Card (newCardWord st) (newCardTranslation st) time (-1)
     let index = fromJust $ elemIndex cc (collections st)
-    return $ resetSubState $ st {selectedCollection = Just cc, 
-        collections = (take index (collections st)) ++ [cc] ++ (drop (index + 1) (collections st))}
+    return $ resetSubState $ st {selectedCollection = Just cc, collections = changeByIndex (collections st) index cc}
 
 activateLearnSubMode :: State -> IO State
 activateLearnSubMode st = do
-    curTime <- getPOSIXTime
-    return $ activate st $ findNextCardToLearn (fromJust (selectedCollection st)) 0 (round curTime)
+    curTime <- getTime
+    return $ nextOrEndLearn st $ findNextCardToLearn (fromJust (selectedCollection st)) 0 curTime
 
-activate :: State -> Int -> State
-activate st ind 
+nextOrEndLearn :: State -> Int -> State
+nextOrEndLearn st ind 
     | ind == -1 = (resetSubState st) {submode = Learn 'f' 0}
     | otherwise = (resetSubState st) {submode = Learn 'w' ind}
-    
+
+nextLearn :: State -> Char -> IO State
+nextLearn st how = do
+    time <- getTime
+    let new_cc = cc {cards = changeByIndex (cards cc) ind (changeRating ((cards cc) !! ind) time how)}
+    writeCollectionToFile new_cc
+    return $ nextOrEndLearn (st {collections = changeByIndex (collections st) index new_cc, selectedCollection = Just new_cc}) $ findNextCardToLearn new_cc (ind + 1) time
+    where
+        Learn 't' ind = submode st
+        cc = fromJust $ selectedCollection st
+        index = fromJust $ elemIndex cc (collections st)
+
+changeRating :: Card -> Int -> Char -> Card
+changeRating card time how = case how of
+    'n' -> card {lastLearningTime = time}
+    'h' -> card {lastLearningTime = time, rating = -1}
+    'e' -> card {lastLearningTime = time, rating = (rating card) + 1}
 
 -- Check functions
 
@@ -152,6 +164,21 @@ isStopButton st x y = case (mode st, submode st) of
 isShowButton :: State -> Float -> Float -> Bool
 isShowButton st x y = case (mode st, submode st) of 
     (Select, Learn 'w' ind) -> isButton showTranslationButton x y 0
+    _ -> False
+
+isEasyButton :: State -> Float -> Float -> Bool
+isEasyButton st x y = case (mode st, submode st) of
+    (Select, Learn 't' ind) -> isButton easyButton x y 0
+    _ -> False
+
+isNormalButton :: State -> Float -> Float -> Bool
+isNormalButton st x y = case (mode st, submode st) of
+    (Select, Learn 't' ind) -> isButton normalButton x y 0
+    _ -> False
+
+isHardButton :: State -> Float -> Float -> Bool
+isHardButton st x y = case (mode st, submode st) of
+    (Select, Learn 't' ind) -> isButton hardButton x y 0
     _ -> False
 
 isCollection :: State -> Float -> Float -> Maybe CardCollection

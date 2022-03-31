@@ -39,17 +39,15 @@ data CardCollection = CardCollection
 instance Eq CardCollection where
     CardCollection _ path1 _ _ _ == CardCollection _ path2 _ _ _ = path1 == path2
 
-findNextCardToLearn :: CardCollection -> Int -> Int -> Int
-findNextCardToLearn cc@(CardCollection _ _ count cards _) ind curTime
-    | ind == count = -1
-    | isNeedToLearn (cards !! ind) curTime = ind
-    | otherwise = findNextCardToLearn cc (ind + 1) curTime
+writeCollectionToFile :: CardCollection -> IO ()
+writeCollectionToFile cc = do
+    let content = (name cc) ++ "\n" ++ (intercalate "" (map cardToString (cards cc)))
+    writeFile (path cc) content
 
-loadAllCollections :: [CardCollection] -> Float -> [String] -> IO [CardCollection]
-loadAllCollections ans _ [] = return ans
-loadAllCollections ans ind paths = do
-    cc <- loadCollection ind $ head paths
-    loadAllCollections (ans ++ [cc]) (ind + 1) $ tail paths 
+writeNewCollectionToFile :: Float -> String -> String -> IO CardCollection
+writeNewCollectionToFile ind path name = do
+    writeFile path (name ++ "\n")
+    loadCollection ind path
 
 loadCollection :: Float -> String -> IO CardCollection
 loadCollection ind path = do
@@ -61,13 +59,30 @@ reloadCollection cc = do
     (name, cards) <- getCollectionInfo $ path cc
     return cc {cards = cards, count = length cards}
 
+loadAllCollections :: [CardCollection] -> Float -> [String] -> IO [CardCollection]
+loadAllCollections ans _ [] = return ans
+loadAllCollections ans ind paths = do
+    cc <- loadCollection ind $ head paths
+    loadAllCollections (ans ++ [cc]) (ind + 1) $ tail paths 
+
+addCardToCollection :: CardCollection -> Card -> IO CardCollection
+addCardToCollection cc card = do
+    appendFile (path cc) $ cardToString card
+    return cc {cards = (cards cc) ++ [card], count = (count cc) + 1}
+
 updateCollectionPositions :: [CardCollection] -> [CardCollection]
 updateCollectionPositions cc = zipWith (\c ind -> c {button = collectionButton ind}) cc indx where indx = [1..] :: [Float]
+
+findNextCardToLearn :: CardCollection -> Int -> Int -> Int
+findNextCardToLearn cc@(CardCollection _ _ count cards _) ind curTime
+    | ind >= count = -1
+    | isNeedToLearn (cards !! ind) curTime = ind
+    | otherwise = findNextCardToLearn cc (ind + 1) curTime
 
 getCollectionInfo :: String -> IO (String, [Card])
 getCollectionInfo path = do
     ll <- readFile path
-    let tmp = lines $ ll 
+    let tmp = lines $ ll
     let ans | (head tmp) /= "" = (head tmp, map stringToCard $ tail tmp)
             | otherwise = ("", [])  -- get rid of lazy
     return ans

@@ -27,7 +27,7 @@ drawRightMenu st = case (mode st) of
                                    Translate (menuX - menuWidth/2 + pad) (menuY - 3*pad - buttonHeight + menuHeight/2) $ scale 0.2 0.2 $ color black $ text "______________"]
     Select -> Pictures [Translate menuX menuY $ rectangleWire menuWidth menuHeight, drawRightSubMenu st,
                         drawButton cancelButton Blank, drawButton deleteButton Blank, drawButton addCardButton Blank, drawLearnButton st, drawStopButton st,
-                        Translate (menuX - menuWidth/2) (menuY - pad - buttonHeight/2 + menuHeight/2) $ scale 0.3 0.3 $ color black $ text $ name $ fromJust $ selectedCollection st]
+                        Translate (menuX - menuWidth/2 + pad) (menuY - pad - buttonHeight/2 + menuHeight/2) $ scale 0.3 0.3 $ color black $ text $ name $ fromJust $ selectedCollection st]
     _ -> Blank
 
 
@@ -39,10 +39,22 @@ drawRightSubMenu st = case (submode st) of
                            Translate (subMenuX - subMenuWidth/2 + pad) (subMenuY - 2*buttonHeight + subMenuHeight/2) $ scale 0.2 0.2 $ color black $ text "______________",
                            Translate (subMenuX - subMenuWidth/2 + pad) (subMenuY + pad - 4*buttonHeight + subMenuHeight/2) $ scale 0.2 0.2 $ color black $ text (newCardTranslation st),
                            Translate (subMenuX - subMenuWidth/2 + pad) (subMenuY - 4*buttonHeight + subMenuHeight/2) $ scale 0.2 0.2 $ color black $ text "______________"]
-    Learn _ _-> Pictures [Translate subMenuX subMenuY $ rectangleWire menuWidth menuHeight, drawShowTranslationButton st]
+    Learn _ _-> Pictures [Translate subMenuX subMenuY $ rectangleWire menuWidth menuHeight, drawShowTranslationButton st, drawLearnContext st]
     _ -> Blank
 
-
+drawLearnContext :: State -> Picture
+drawLearnContext st = case (submode st) of
+    Learn 'f' _ -> Translate (subMenuX - 50) subMenuY $ scale 0.25 0.25 $ color black $ text "Finish!"
+    Learn 'w' ind -> Pictures [Translate xx yy $ scale 0.25 0.25 $ color black $ text $ word (cards (fromJust (selectedCollection st)) !! ind),
+                              drawButton showTranslationButton Blank]
+    Learn 't' ind -> Pictures [Translate xx yy $ scale 0.25 0.25 $ color black $ text $ word (cards (fromJust (selectedCollection st)) !! ind), 
+                              Translate xx yy1 $ scale 0.25 0.25 $ color black $ text $ translation (cards (fromJust (selectedCollection st)) !! ind),
+                              drawButton easyButton Blank, drawButton hardButton Blank, drawButton normalButton Blank]
+    where
+        xx = subMenuX + pad - subMenuWidth/2
+        yy = subMenuY - pad - buttonHeight/2 + subMenuHeight/2
+        yy1 = subMenuY - 2*pad - 3*buttonHeight/2 + subMenuHeight/2
+    
 -- collections
 
 drawCollectionList :: State -> Picture
@@ -63,7 +75,7 @@ drawButton (Button txt x y (Side w h)) pic = Translate x y $ Pictures [rectangle
 drawButton (Button txt x y (Radius r)) pic = Translate x y $ Pictures [Circle r, Circle (r - 2), drawButtonText (Button txt x y (Radius r)), pic]
 
 drawButtonText :: Button -> Picture
-drawButtonText (Button txt x y (Side w h)) = Translate (-w/2) (-h/8) $ scale 0.22 0.22 $ color black $ text txt
+drawButtonText (Button txt x y (Side w h)) = Translate (-w/2 + pad/2) (-h/8) $ scale 0.22 0.22 $ color black $ text txt
 drawButtonText (Button txt x y (Radius r)) = scale 0.22 0.22 $ color black $ text txt
 
 drawUpButton :: State -> Picture

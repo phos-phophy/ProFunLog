@@ -104,10 +104,13 @@ showTranslationButton :: Button
 showTranslationButton = Button "Show" (subMenuX) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
 
 easyButton :: Button
-easyButton = Button "Easy" (subMenuX + pad - subMenuWidth/2 + w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+easyButton = Button "Easy" (subMenuX + pad - subMenuWidth/2 + w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = ((subMenuWidth - 4*pad) / 3, buttonHeight)
+
+normalButton :: Button
+normalButton = Button "Normal" subMenuX (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = ((subMenuWidth - 4*pad) / 3, buttonHeight)
 
 hardButton :: Button
-hardButton = Button "Hard" (subMenuX - pad + subMenuWidth/2 - w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+hardButton = Button "Hard" (subMenuX - pad + subMenuWidth/2 - w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = ((subMenuWidth - 4*pad) / 3, buttonHeight)
 
 collectionButton :: Float -> Button
 collectionButton ind = Button "" collectionX (collectionY - ind * (pad + collectionHeight)) (Side collectionWidth collectionHeight)
