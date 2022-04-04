@@ -79,7 +79,7 @@ cancelButton :: Button
 cancelButton = Button "Cancel" (menuX - pad - w/2 + menuWidth/2) (menuY + pad - menuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
 
 deleteButton :: Button
-deleteButton = Button "Delete" (menuX - pad - w/2 + menuWidth/2) (menuY + menuHeight/2 - pad - h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+deleteButton = Button "Delete" (menuX - pad - w/2 + menuWidth/2) (menuY + menuHeight/2 - 2*pad -3*h/2) (Side w h) where (w, h) = (2*buttonWidth/3, buttonHeight)
 
 stopButton :: Button
 stopButton = Button "Stop" (menuX + pad - menuWidth/2 + w/2) (menuY + 2*pad - menuHeight/2 + 3*h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
@@ -87,7 +87,16 @@ stopButton = Button "Stop" (menuX + pad - menuWidth/2 + w/2) (menuY + 2*pad - me
 learnButton :: Button
 learnButton = Button "Learn" (menuX + pad - menuWidth/2 + w/2) (menuY + 2*pad - menuHeight/2 + 3*h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
 
+changeNameButton :: Button
+changeNameButton = Button "Change name" (menuX + pad - menuWidth/2 + w/2) (menuY + 3*pad - menuHeight/2 + 5*h/2) (Side w h) where (w, h) = (3*buttonWidth/2, buttonHeight)
+
 -- 3) Right submenu
+saveChangeNameButton :: Button
+saveChangeNameButton = Button "Save" (subMenuX + pad - subMenuWidth/2 + w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+
+cancelChangeNameButton :: Button
+cancelChangeNameButton = Button "Cancel" (subMenuX - pad - w/2 + subMenuWidth/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+
 saveCardButton :: Button
 saveCardButton = Button "Save" (subMenuX + pad - subMenuWidth/2 + w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = (buttonWidth, buttonHeight)
 
@@ -112,6 +121,16 @@ normalButton = Button "Normal" subMenuX (subMenuY + pad - subMenuHeight/2 + h/2)
 hardButton :: Button
 hardButton = Button "Hard" (subMenuX - pad + subMenuWidth/2 - w/2) (subMenuY + pad - subMenuHeight/2 + h/2) (Side w h) where (w, h) = ((subMenuWidth - 4*pad) / 3, buttonHeight)
 
+finishButton :: Button
+finishButton = Button "Finish!" subMenuX subMenuY (Side w h) where (w, h) = (buttonWidth, buttonHeight)
+
+deleteCardButton :: Button
+deleteCardButton = Button "Delete" (subMenuX + subMenuWidth/2 - pad - w/2)  (subMenuY - subMenuHeight/2 + 5*h/2 + 3*pad) (Side w h) where (w, h) = (2*buttonWidth/3, buttonHeight)
+
+editCardButton :: Button
+editCardButton = Button "Edit" (subMenuX - subMenuWidth/2 + pad + w/2) (subMenuY - subMenuHeight/2 + 3*h/2 + 2*pad) (Side w h) where (w, h) = (buttonWidth/2, buttonHeight)
+
+-- 4) Collection
 collectionButton :: Float -> Button
 collectionButton ind = Button "" collectionX (collectionY - ind * (pad + collectionHeight)) (Side collectionWidth collectionHeight)
 
