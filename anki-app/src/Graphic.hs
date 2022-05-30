@@ -5,6 +5,7 @@ import State
 import Card
 import Button
 import Data.Maybe
+import Config
 
 
 drawState :: State -> IO Picture
@@ -51,6 +52,7 @@ drawLearnContext st = case (submode st) of
     Learn 't' ind -> Pictures [Translate xx yy $ scale 0.25 0.25 $ color black $ text $ word (cards (fromJust (selectedCollection st)) !! ind), 
                               Translate xx yy1 $ scale 0.25 0.25 $ color black $ text $ translation (cards (fromJust (selectedCollection st)) !! ind),
                               drawButton easyButton Blank, drawButton hardButton Blank, drawButton normalButton Blank, drawButton deleteCardButton Blank, drawButton editCardButton Blank]
+    _ -> Blank
     where
         xx = subMenuX + pad - subMenuWidth/2
         yy = subMenuY - pad - buttonHeight/2 + subMenuHeight/2
@@ -72,7 +74,7 @@ drawCollectionList st = Pictures $ map (drawCollection st) $ dropWhile (\cc -> (
 
 drawCollection :: State -> CardCollection -> Picture
 drawCollection st cc = case (button cc) of
-    (Button txt x y (Side w h)) -> Translate x (y - (cur_y st)) $ 
+    (Button _ x y (Side w h)) -> Translate x (y - (cur_y st)) $ 
         Pictures [rectangleWire w h, Translate (-w/2 + pad/2) (-h/8) $ scale 0.3 0.3 $ color black $ text (name cc),
                   Translate (w/2 - 20) (-h/8) $ scale 0.2 0.2 $ color red $ text $ show (count cc)]
     _ -> Blank
@@ -85,8 +87,8 @@ drawButton (Button txt x y (Side w h)) pic = Translate x y $ Pictures [rectangle
 drawButton (Button txt x y (Radius r)) pic = Translate x y $ Pictures [Circle r, Circle (r - 2), drawButtonText (Button txt x y (Radius r)), pic]
 
 drawButtonText :: Button -> Picture
-drawButtonText (Button txt x y (Side w h)) = Translate (-w/2 + pad/2) (-h/8) $ scale 0.22 0.22 $ color black $ text txt
-drawButtonText (Button txt x y (Radius r)) = scale 0.22 0.22 $ color black $ text txt
+drawButtonText (Button txt _ _ (Side w h)) = Translate (-w/2 + pad/2) (-h/8) $ scale 0.22 0.22 $ color black $ text txt
+drawButtonText (Button txt _ _ (Radius _)) = scale 0.22 0.22 $ color black $ text txt
 
 drawUpButton :: State -> Picture
 drawUpButton st
@@ -118,11 +120,13 @@ drawLearnButton :: State -> Picture
 drawLearnButton st = case (mode st, submode st) of
     (Select, Learn _ _) -> Blank
     (Select, _) -> drawButton learnButton Blank
+    _ -> Blank
 
 drawStopButton :: State -> Picture
 drawStopButton st = case (mode st, submode st) of
     (Select, Learn _ _) -> drawButton stopButton Blank
     (Select, _) -> Blank
+    _ -> Blank
 
 drawAddCardWordButton :: State -> Picture
 drawAddCardWordButton st = case (mode st, submode st) of

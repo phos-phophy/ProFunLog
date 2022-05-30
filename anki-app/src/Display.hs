@@ -8,10 +8,10 @@ import HandleEvent
 
 
 displayState :: State -> IO ()
-displayState state = playIO (display state) color fps state drawState handleEvent stateUpdate 
+displayState state = playIO (display state) color0 fps state drawState handleEvent stateUpdate 
     where 
-        display state = InWindow "Anki" ((width state), (height state)) (0, 0)
-        color = white
+        display state0 = InWindow "Anki" ((width state0), (height state0)) (0, 0)
+        color0 = white
         fps = 10
 
 run :: IO ()

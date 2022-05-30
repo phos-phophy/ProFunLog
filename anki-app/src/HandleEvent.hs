@@ -8,6 +8,7 @@ import Utils
 import Button
 import Data.List
 import Data.Maybe
+import Config
 
 
 handleEvent :: Event -> State -> IO State
@@ -67,8 +68,8 @@ handleEvent _ st = return st
 saveNewCollection :: State -> IO State
 saveNewCollection st = do
     time <- getTime
-    let path = (path_to_cols st) ++ (show time) ++ ".txt"
-    cc <- writeNewCollectionToFile (fromIntegral (length (collections st)) + 1) path (newCollectionName st)
+    let path0 = (path_to_cols st) ++ (show time) ++ ".txt"
+    cc <- writeNewCollectionToFile (fromIntegral (length (collections st)) + 1) path0 (newCollectionName st)
     return $ resetState $ st {collections = (collections st) ++ [cc]}
 
 deleteCollection :: State -> IO State
@@ -101,7 +102,7 @@ editCard :: State -> IO State
 editCard st = return st {submode = EditCard 'w' ind, newCardWord = (word card), newCardTranslation = (translation card)}
     where
         (Learn 't' ind) = submode st
-        (cc, index) = fromJust $ getSelectedIndex st
+        (cc, _) = fromJust $ getSelectedIndex st
         card = (cards cc) !! ind
 
 saveChangeCard :: State -> IO State
@@ -140,6 +141,7 @@ changeRating card time how = case how of
     'n' -> card {lastLearningTime = time}
     'h' -> card {lastLearningTime = time, rating = -1}
     'e' -> card {lastLearningTime = time, rating = (rating card) + 1}
+    _ -> card
 
 changeCollectionName :: State -> IO State
 changeCollectionName st = do
@@ -187,7 +189,7 @@ isCancelButton st x y = case (mode st) of
 
 isCancelCardButton :: State -> Float -> Float -> Bool
 isCancelCardButton st x y = case (submode st) of
-    AddCard c -> isButton cancelCardButton x y 0
+    AddCard _ -> isButton cancelCardButton x y 0
     EditCard _ _ -> isButton cancelCardButton x y 0
     _ -> False
 
@@ -203,7 +205,7 @@ isSaveButton st x y = case (mode st) of
 
 isSaveCardButton :: State -> Float -> Float -> Bool
 isSaveCardButton st x y = case (submode st) of
-    AddCard c -> and [isButton saveCardButton x y 0, (newCardWord st) /= "", (newCardTranslation st) /= ""]
+    AddCard _ -> and [isButton saveCardButton x y 0, (newCardWord st) /= "", (newCardTranslation st) /= ""]
     EditCard _ _ -> and [isButton saveCardButton x y 0, (newCardWord st) /= "", (newCardTranslation st) /= ""]
     _ -> False
 
@@ -232,22 +234,22 @@ isStopButton st x y = case (mode st, submode st) of
 
 isShowButton :: State -> Float -> Float -> Bool
 isShowButton st x y = case (mode st, submode st) of 
-    (Select, Learn 'w' ind) -> isButton showTranslationButton x y 0
+    (Select, Learn 'w' _) -> isButton showTranslationButton x y 0
     _ -> False
 
 isEasyButton :: State -> Float -> Float -> Bool
 isEasyButton st x y = case (mode st, submode st) of
-    (Select, Learn 't' ind) -> isButton easyButton x y 0
+    (Select, Learn 't' _) -> isButton easyButton x y 0
     _ -> False
 
 isNormalButton :: State -> Float -> Float -> Bool
 isNormalButton st x y = case (mode st, submode st) of
-    (Select, Learn 't' ind) -> isButton normalButton x y 0
+    (Select, Learn 't' _) -> isButton normalButton x y 0
     _ -> False
 
 isHardButton :: State -> Float -> Float -> Bool
 isHardButton st x y = case (mode st, submode st) of
-    (Select, Learn 't' ind) -> isButton hardButton x y 0
+    (Select, Learn 't' _) -> isButton hardButton x y 0
     _ -> False
 
 isFinishButton :: State -> Float -> Float -> Bool
@@ -284,5 +286,5 @@ isEditCardButton st x y = case (mode st, submode st) of
 isCollection :: State -> Float -> Float -> Maybe CardCollection
 isCollection st x y = case (dropWhile (\cc -> not (isButton (button cc) x y (cur_y st))) $ dropWhile (\cc -> (center_y (button cc)) > (collectionY - (pad + collectionHeight)) + (cur_y st)) $ collections st) of
     [] -> Nothing
-    (x:xs) -> Just x
+    (x0:_) -> Just x0
 

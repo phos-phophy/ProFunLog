@@ -2,7 +2,7 @@ module State where
 
 import System.Directory
 import Card
-import Button
+import Button()
 import Utils
 import Data.List
 import Data.Maybe
@@ -37,11 +37,11 @@ stateUpdate _ st = case (erase st, mode st, submode st) of
 
 
 getState :: String -> IO State
-getState path = do
-    files_ <- listDirectory path
-    let files = map (\x -> path ++ x) files_
+getState path0 = do
+    files_ <- listDirectory path0
+    let files = map (\x -> path0 ++ x) files_
     cols <- loadAllCollections [] 1 files
-    return $ State {path_to_cols = path, collections = cols, mode = None, submode = None1, newCollectionName = "", 
+    return $ State {path_to_cols = path0, collections = cols, mode = None, submode = None1, newCollectionName = "", 
                     selectedCollection = Nothing, width = 1000, height = 1000, cur_y = 0,
                     newCardWord = "", newCardTranslation = "", erase = False}
 
