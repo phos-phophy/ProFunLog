@@ -50,13 +50,17 @@ check(tree(T11, T12, S), tree(T21, T22, S)):- check(T11, T21), check(T12, T22).
 /* flatten_tree(T, L): L - список меток всех узлов дерева ("выровненное" дерево)
 
 Допустимые варианты использования:
+* (i, i): проверяет, является ли L списком меток всех узлов дерева
+* (i, o): возвращает список меток
+* (o, o): T = nil, L = []
+
+Недопустимые варианты использования:
+* (o, i): зацикливание и исчерпание стека
 */
-flatten_tree(tree(nil, nil, S), [S]):- !.
-flatten_tree(tree(T1, nil, S), [S|L1]):- !, flatten_tree(T1, L1).
-flatten_tree(tree(nil, T2, S), [S|L2]):- !, flatten_tree(T2, L2).
-flatten_tree(tree(T1, T2, S), [S|L3]):- flatten_tree(T1, L1), flatten_tree(T2, L2), append(L1, L2, L3).
-append([], L1, L1).
-append([X1|R1], L2, [X1|R3]):- append(R1, L2, R3).
+flatten_tree(T, L):- flat(T, L, []).
+flat(nil, Res, Res):-!.
+flat(tree(T1, T2, S), Res, Acc):- !, flat(T1, Res1, Acc), flat(T2, Res2, Res1), flat(S, Res, Res2).
+flat(X, [X|Res], Res).
 
 
 /* substitute(T1, V, T, T2): T2 - дерево, полученное путем замены всех вхождений V в дереве T1 на терм T
@@ -79,7 +83,7 @@ append([X1|R1], L2, [X1|R3]):- append(R1, L2, R3).
       => X = b
       ?- substitute(tree(nil, tree(nil, nil, b), b), X, a, tree(nil, tree(nil, nil, a), c))
       => false
-* (o, i, i, i): строит T1 (обратаная замена)
+* (o, i, i, i): строит T1 (обратная замена)
       ?- substitute(X, b, a, tree(nil, tree(nil, nil, a), c))
       => tree(nil, tree(nil, nil, b), c)
 */
