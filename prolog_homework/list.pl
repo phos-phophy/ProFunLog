@@ -130,3 +130,22 @@ sublist_(_, [], 2).
 */
 number(E, 0, [E|_]):- !.
 number(E, N, [_|T]):- number(E, N1, T), N is N1 + 1.
+
+
+/* sort(L1, L2): L2 - отсортированный по неубыванию список чисел из L1
+
+Допустимые варианты использования:
+* (i, i): проверяет, является ли L2 отсортированный по неубыванию списком чисел из L1
+* (i, o): возвращает отсортированный по неубыванию список L2
+* (o, o): возвращает пустые списки
+
+Недопустимые варианты использования:
+* (o, i): Arguments are not sufficiently instantiated
+*/
+sort([], []).
+sort([H|T], [L12, H|L22]):- left(H, T, L11), right(H, T, L22), sort(L11, L12), sort(L12, L22).
+left(_, [], _).
+left(E, [H|T], [H|Acc]):- E > H, !, left(E, T, Acc).
+left(E, [_|T], Acc):- left(E, T, Acc).
+right(E, [H|T], [H|Acc]):- E =< H, !, right(E, T, Acc).
+right(E, [_|T], Acc):- right(E, T, Acc).
