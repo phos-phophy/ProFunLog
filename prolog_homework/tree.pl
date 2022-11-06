@@ -51,8 +51,21 @@ check(tree(T11, T12, S), tree(T21, T22, S)):- check(T11, T21), check(T12, T22).
 
 Допустимые варианты использования:
 * (i, i): проверяет, является ли L списком меток всех узлов дерева
+      true:
+          * flatten_tree(nil, [])
+          * flatten_tree(tree(nil, nil, 10), [10])
+      false:
+          * flatten_tree(tree(nil, tree(nil, nil, 10), 10), [10, [10]])
 * (i, o): возвращает список меток
-* (o, o): T = nil, L = []
+      ?- flatten_tree(tree(nil, nil, 5), X)
+      => X = [5]
+      ?- flatten_tree(tree(tree(nil, tree(nil, nil, 10), 7), nil, 5), X)
+      => X = [5, 7, 10]
+      ?- flatten_tree(tree(tree(tree(nil, nil, abs), tree(nil, nil, 10), 5), tree(tree(nil, nil, b), nil, 15), a), X)
+      => X = [a, 15, b, 5, 10, abs]
+* (o, o):
+      ?- flatten_tree(X, Y) 
+      => X = nil, Y = []
 
 Недопустимые варианты использования:
 * (o, i): зацикливание и исчерпание стека
