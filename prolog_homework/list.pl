@@ -61,7 +61,7 @@ delete_first(E, [X1|T1], [X1|T2]):- delete_first(E, T1, T2).
 */
 delete_all(_, [], []):- !.
 delete_all(E, [E|T1], T2):- !, delete_all(E, T1, T2).
-delete_all(E, [X1|T1], [X1|T2]):- !,delete_all(E, T1, T2).
+delete_all(E, [X1|T1], [X1|T2]):- delete_all(E, T1, T2).
 
 
 /* delete_one(E, L1, L2): L2 - это список L1, из которого удалено одно любое вхождение элемента E 
@@ -140,12 +140,16 @@ number(E, N, [_|T]):- number(E, N1, T), N is N1 + 1.
 * (o, o): возвращает пустые списки
 
 Недопустимые варианты использования:
-* (o, i): Arguments are not sufficiently instantiated
+* (o, i): возвращает false
 */
-sort([], []).
-sort([H|T], [L12, H|L22]):- left(H, T, L11), right(H, T, L22), sort(L11, L12), sort(L12, L22).
-left(_, [], _).
+quick_sort([], []):- !.
+quick_sort([H|T], L):- 
+    left(H, T, NL1), right(H, T, NL2), 
+    quick_sort(NL1, L1), quick_sort(NL2, L2), 
+    append(L1, [H|L2], L).
+left(_, [], []):- !.
 left(E, [H|T], [H|Acc]):- E > H, !, left(E, T, Acc).
 left(E, [_|T], Acc):- left(E, T, Acc).
+right(_, [], []):- !.
 right(E, [H|T], [H|Acc]):- E =< H, !, right(E, T, Acc).
 right(E, [_|T], Acc):- right(E, T, Acc).
