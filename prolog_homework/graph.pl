@@ -85,7 +85,7 @@ min_value([_/Value|T], MinValue):- min_value(T, MinV), MinValue is min(Value, Mi
       => false
 * (o, o, o): находит абсолютно все маршруты в графе
 */
-path(X, Y, L):- path(X, Y, L):- full_path(X, Y, L, [X], _, _, 0, 0).
+path(X, Y, L):- full_path(X, Y, L, [X], _, _, 0, 0).
 
 
 /* min_path(X, Y, L): L - путь между вершинами X и Y, имеющий минимальную стоимость (стоимость пути равна сумме стоимостей входящих в него ребер)
