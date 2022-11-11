@@ -133,51 +133,34 @@ min_path(X, Y, L):- findall(Way/Cost, full_path(X, Y, Way, [X], Cost, _, 0, 0), 
 Допустимые варианты использования:
 * (i, i, i): проверяет, является ли L кратчайшим путем от X до Y
       true:
-        * short_path(c, d, [c, d])
+        * short_path(c, d, [d])
       false:
-        * short_path(c, d, [c, a, b, d])
+        * short_path(c, d, [a, b, d])
 * (i, i, o): ищет кратчайшие пути от X до Y
       ?- short_path(c, d, X)
-      => X = [c, a, b, d]
-* (i, o, o): ищет вершины Y, путь до которых от X будет самым коротким
+      => X = [d]
+* (i, o, o):
       ?- short_path(d, Y, Z)
-      => Z = [d, c]
-      => Z = [d, b]
-      => Z = [d, r]
-      => false
-      ?- short_path(a, Y, Z)
-      => Z = [a, c]
-      => Z = [a, b]]
-      => false
-* (o, i, o): ищет вершины X, путь от которых до Y будет самым коротким
+      => Y = d, Z = []
+* (o, i, o):
       ?- short_path(X, c, Z)
-      => Z = [a, c]
-      => Z = [d, c]
-      => false
-      ?- short_path(X, d, Z)
-      => Z = [c, d]
-      => Z = [b, d]
-      => Z = [e, d]
-      => false
-* (o, o, o): ищет самые минимальные по стоимости пути в графе
+      => X = c, Z = []
+* (o, o, o):
       ?- min_path(X, Y, Z)
-      => Z = [a, c]
-      => Z = [a, b]
-      => Z = [c, d]
-      => Z = [b, d]
-      => Z = [e, d]
-      => Z = [c, a]
-      => Z = [b, a]
-      => Z = [d, c]
-      => Z = [d, b]
-      => Z = [d, e]
+      => X = Y, Z = []
 
 Недопустимые варианты использования:
 * (i, o, i)
 * (o, i, i)
 * (o, o, i)
 */
-short_path(X, Y, L):- findall(Way/NumM, full_path(X, Y, Way, [X], _, NumM, 0, 0), AllWays), min_value(AllWays, MinNumM), member(L/MinNumM, AllWays).
+short_path(X, Y, L) :- bfs(Y, [n(X, [])], R), reverse(R, L).
+bfs(Y, [n(Y, L)|_], L):- !.
+bfs(_, [n(X, L)|_], _):- member(X, L), fail.
+bfs(Y, [n(X, P)|T], L):-
+    findall(n(XNext, [XNext|P]), edge_(X, XNext, _), W),
+    append(T, W, O),
+    bfs(Y, O, L).
 
 
 /* cyclic: граф является циклическим, т.е. не является деревом */
