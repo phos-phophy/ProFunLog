@@ -1,27 +1,39 @@
 ;;; combine answers
 (defun comb_ans (ans1 ans2)
-    (cond ((null ans1) ans2)
+    (cond 
+        ((null ans1) ans2)
         ((null ans2) ans1)
-        (T (RevAppend ans1 ans2))))
+        (T (RevAppend ans1 ans2))
+    )
+)
 
 ;;; check whether this town has been visited
 (defun check_visit (town visited)
-    (cond ((null visited) NIL)
+    (cond 
+        ((null visited) NIL)
         ((eq town (caar visited)) T)
-        (T (check_visit town (cdr visited)))))
+        (T (check_visit town (cdr visited)))
+    )
+)
 
 ;;; return list of towns that can be visited from 'from'
 (defun where (graph from) (_where graph from NIL))
 (defun _where (graph from acc)
-    (cond ((null graph) acc)
+    (cond 
+        ((null graph) acc)
         ((eq from (caar graph)) (_where (cdr graph) from (cons (cdar graph) acc))) 
         ((eq from (cadar graph)) (_where (cdr graph) from (cons (cons (caar graph) (cddar graph)) acc)))
-        (T (_where (cdr graph) from acc))))
+        (T (_where (cdr graph) from acc))
+    )
+)
 
 ;;; increase count if road type has changed     
 (defun update (next cur_type count)
-    (cond ((eq (cadr next) cur_type) count) 
-        (T (+ 1 count))))
+    (cond 
+        ((eq (cadr next) cur_type) count) 
+        (T (+ 1 count))
+    )
+)
         
 ;;; return list of the suitable ways ( ((...) count length) (...) ...) 
 (defun find_ways (graph from to visited cur_type count length) 
