@@ -37,42 +37,62 @@
         
 ;;; return list of the suitable ways ( ((...) count length) (...) ...) 
 (defun find_ways (graph from to visited cur_type count length) 
-    (cond ((eq from to) (cons (list visited count length) NIL))
-        (T (_find_ways graph from to visited cur_type count length (where graph from)))))
+    (cond 
+        ((eq from to) (cons (list visited count length) NIL))
+        (T (_find_ways graph from to visited cur_type count length (where graph from)))
+    )
+)
 (defun _find_ways (graph from to visited cur_type count length next) 
-    (cond ((null next) NIL)
-        ((not (check_visit (caar next) visited)) (comb_ans (_find_ways graph from to visited cur_type count length (cdr next)) 
-                                                        (find_ways graph (caar next) to (cons (car next) visited) (cadar next) (update (car next) cur_type count) (+ (caddar next) length))))
-        (T (_find_ways graph from to visited cur_type count length (cdr next)))))
+    (cond 
+        ((null next) NIL)
+        ((not (check_visit (caar next) visited)) 
+         (comb_ans (_find_ways graph from to visited cur_type count length (cdr next)) 
+                   (find_ways graph (caar next) to (cons (car next) visited) (cadar next) 
+                              (update (car next) cur_type count) (+ (caddar next) length))))
+        (T (_find_ways graph from to visited cur_type count length (cdr next)))
+    )
+)
 
 ;;; find the min value in 'ways'
 (defun my_min (ways min_v extract) 
-    (cond ((null ways) min_v)
+    (cond 
+        ((null ways) min_v)
         ((null min_v) (my_min (cdr ways)  (funcall extract (car ways)) extract))
         ((<  (funcall extract (car ways)) min_v) (my_min (cdr ways)  (funcall extract (car ways)) extract))
-        (T (my_min (cdr ways) min_v extract))))
+        (T (my_min (cdr ways) min_v extract))
+    )
+)
 
 ;;; select such ways from 'ways' that match the condition
 (defun select (ways num condition extract) (_select ways num condition extract NIL))
 (defun _select (ways num condition extract acc) 
-    (cond ((null ways) acc)
+    (cond 
+        ((null ways) acc)
         ((funcall condition num (funcall extract (car ways))) (_select (cdr ways) num condition extract (cons (car ways) acc)))
-        (T (_select (cdr ways) num condition extract acc))))
+        (T (_select (cdr ways) num condition extract acc))
+    )
+)
         
 ;;; select such ways that contain this town
 (defun select2 (ways town) (_select2 ways town NIL))   
 (defun _select2 (ways town acc) 
-    (cond ((null town) ways) ; if town is not defined all ways are returned
+    (cond 
+        ((null town) ways) ; if town is not defined all ways are returned
         ((null ways) acc) 
         ((check_visit town (caar ways)) (_select2 (cdr ways) town (cons (car ways) acc)))
-        (T (_select2 (cdr ways) town acc))))
+        (T (_select2 (cdr ways) town acc))
+    )
+)
 
 ;;; ascending sort by extracted value
 (defun asc_sort (ways extract) 
-    (cond ((null ways) NIL)
+    (cond 
+        ((null ways) NIL)
         (T (append (asc_sort (select ways (funcall extract (car ways)) '> extract) extract) 
-            (select ways (funcall extract (car ways)) 'eq extract)
-            (asc_sort (select ways (funcall extract (car ways)) '< extract) extract)))))
+                   (select ways (funcall extract (car ways)) 'eq extract)
+                   (asc_sort (select ways (funcall extract (car ways)) '< extract) extract)))
+    )
+)
 
 ;;; print result
 (defun print_res (ways)
