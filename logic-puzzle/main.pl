@@ -1,27 +1,36 @@
-:- consult('./generate.pl').
 :- use_module(library(pce)). 
+:- consult('./generate.pl').
 :- initialization start.
 
+
 start:- 
-    new(@dw, dialog('Logic puzzle')),
-    send(@dw, width(700)),
-    send(@dw, height(700)),
+    new(Frame, frame('Logic puzzle')),
 
-    send(@dw, append, bitmap('./logo.xpm')),
+    main_menu(Dialog),
 
-    new(@MainMenu, dialog_group('')),
-    send(@dw, append, @MainMenu),
-    send(@MainMenu, gap, size(250, 30)),
+    send(Frame, append, Dialog),
+    send(Frame, open).
 
-    new(@ComplexityButtons, dialog_group('Select complexity of puzzle')),
-    send(@MainMenu, append, @ComplexityButtons),
-    send(@ComplexityButtons, gap, size(60, 20)),
-    send(@ComplexityButtons, append, button('Easy', message(@prolog, generate_level_, @dw, @MainMenu, 0))),
-    send(@ComplexityButtons, append, button('Medium', message(@prolog, generate_level_, @dw, @MainMenu, 1)), next_row),
-    send(@ComplexityButtons, append, button('Hard', message(@prolog, generate_level_, @dw, @MainMenu, 2)), next_row),
+
+main_menu(Dialog):-
+
+    new(Dialog, dialog),
+    send(Dialog, width(700)),
+    send(Dialog, height(700)),
  
-    send(@MainMenu, append, button('Exit', message(@dw, destroy))),
+    send(Dialog, append, bitmap('./logo.xpm')),
 
-    send(@dw, open).
+    new(Menu, dialog_group('')),
+    send(Dialog, append, Menu),
+    send(Menu, gap, size(250, 30)),
 
-generate_level_(Frame, HideFrame, Complex):- send(HideFrame, destroy), generate_level(Frame, Complex).
+    new(Buttons, dialog_group('Select complexity of puzzle')),
+    send(Menu, append, Buttons),
+    send(Buttons, gap, size(60, 20)),
+    send(Buttons, append, button('Low', message(@prolog, generate_level_, Dialog, 0))),
+    send(Buttons, append, button('Medium', message(@prolog, generate_level_, Dialog, 1)), next_row),
+    send(Buttons, append, button('High', message(@prolog, generate_level_, Dialog, 2)), next_row),
+
+    send(Menu, append, button('Exit', message(Dialog, destroy))).
+
+generate_level_(Dialog, Complexity):- send(Dialog, destroy), generate_level(Complexity).
