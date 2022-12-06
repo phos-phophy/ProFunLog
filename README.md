@@ -7,4 +7,4 @@ lisp\_fp - lisp final project
 
 ## 7th semester
 - prolog_homework
-- logical-puzzle - desktop application
+- logic-puzzle - desktop application
