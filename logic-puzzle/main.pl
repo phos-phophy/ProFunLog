@@ -3,14 +3,15 @@
 :- initialization start.
 
 start:- 
-    new(@dw, dialog('Logical puzzle')),
+    new(@dw, dialog('Logic puzzle')),
     send(@dw, width(700)),
     send(@dw, height(700)),
+
+    send(@dw, append, bitmap('./logo.xpm')),
 
     new(@MainMenu, dialog_group('')),
     send(@dw, append, @MainMenu),
     send(@MainMenu, gap, size(250, 30)),
-    send(@MainMenu, append, text('Hello!')),
 
     new(@ComplexityButtons, dialog_group('Select complexity of puzzle')),
     send(@MainMenu, append, @ComplexityButtons),
