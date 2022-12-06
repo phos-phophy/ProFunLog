@@ -27,10 +27,10 @@ main_menu(Dialog):-
     new(Buttons, dialog_group('Select complexity of puzzle')),
     send(Menu, append, Buttons),
     send(Buttons, gap, size(60, 20)),
-    send(Buttons, append, button('Low', message(@prolog, generate_level_, Dialog, 0))),
-    send(Buttons, append, button('Medium', message(@prolog, generate_level_, Dialog, 1)), next_row),
-    send(Buttons, append, button('High', message(@prolog, generate_level_, Dialog, 2)), next_row),
+    send(Buttons, append, button('Low', message(@prolog, play_menu_, Dialog, 0))),
+    send(Buttons, append, button('Medium', message(@prolog, play_menu_, Dialog, 1)), next_row),
+    send(Buttons, append, button('High', message(@prolog, play_menu_, Dialog, 2)), next_row),
 
     send(Menu, append, button('Exit', message(Dialog, destroy))).
 
-generate_level_(Dialog, Complexity):- send(Dialog, destroy), generate_level(Complexity).
+play_menu_(Dialog, Complexity):- send(Dialog, destroy), play_menu(Complexity).
