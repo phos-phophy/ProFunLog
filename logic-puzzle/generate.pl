@@ -1,8 +1,3 @@
-complexity(0, 'Logic puzzle: Low complexity').
-complexity(1, 'Logic puzzle: Medium complexity').
-complexity(2, 'Logic puzzle: High complexity').
-
-
 pictureQWidth(500).
 pictureQHeight(250).
 pictureAWidth(500).
@@ -15,6 +10,8 @@ size(100).
 figure(0, Box, Size):- new(Box, box(Size, Size)).
 figure(1, Circle, Size):- new(Circle, circle(Size)).
 figure(2, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [point(0, 0), point(Size / 2, -Size), point(Size, 0), point(0, 0)]).
+figure(3, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [point(0, Size / 2), point(0, -Size / 2), point(Size, -Size / 2), point(0, Size / 2)]).
+figure(4, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [point(0, -Size / 2), point(Size, -Size / 2), point(Size, Size / 2), point(0, -Size / 2)]).
 
 
 % 0 - give answer, 1 - see next question
@@ -26,8 +23,7 @@ mode(0).
 
 
 play_menu(Comp):-
-    complexity(Comp, Title),
-    new(Frame, frame(Title)),
+    new(Frame, frame('Logic puzzle')),
 
     new(Dialog, dialog),
     add_question_sub_menu(Dialog, PictureQ),
@@ -109,8 +105,12 @@ ok_button(_, PictureA, 0, _, Select):-
     retract(mode(0)).
 
 
-generate_question(PictureQ, PictureA, _):-
-    get_types(0, 3, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8),
+generate_question(PictureQ, PictureA, Comp):-
+
+    From is 0,
+    (Comp is 0 -> To is 3; To is 5),
+
+    get_types(From, To, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8),
 
     size(Size), pictureQHeight(HQ), HeightQ is HQ / 2 - Size / 2,
 
