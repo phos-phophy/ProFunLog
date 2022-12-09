@@ -48,7 +48,7 @@ add_answer_sub_menu(Dialog, Picture, Select):-
     send(Answer, append, Picture),
 
     new(Select, menu('Your answer')),
-    send_list(Select, append, ['1', '2', '3', '4']),
+    send_list(Select, append, [1, 2, 3, 4]),
     send(Answer, append, Select).
 
 
@@ -75,6 +75,7 @@ ok_button(PictureQ, PictureA, 1, Comp, _):-
     
     asserta(mode(0)),
     retract(mode(1)),
+    retract(answer(_)),
 
     generate_question(PictureQ, PictureA, Comp).
 
@@ -103,9 +104,11 @@ generate_question(PictureQ, PictureA, _):-
     get(PictureA, size, SzA), get(SzA, height, HA),
     HeightA is HA / 2 - Size / 2,
 
-    add_simple_figure(PictureA, Type4, Type3, 100, HeightA, Size),
-    add_simple_figure(PictureA, Type5, Type6, 250, HeightA, Size),
-    add_simple_figure(PictureA, Type7, Type8, 400, HeightA, Size).
+    locate_answer(X1, X2, X3),
+
+    add_simple_figure(PictureA, Type4, Type3, X1, HeightA, Size),
+    add_simple_figure(PictureA, Type5, Type6, X2, HeightA, Size),
+    add_simple_figure(PictureA, Type7, Type8, X3, HeightA, Size).
 
 
 get_types(From, To, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8):-
@@ -137,4 +140,12 @@ add_simple_figure(Picture, TypeBig, TypeSmall, X, Y, Size):-
     
     send(Picture, display, BigFigure, point(X - Size / 2, Y)),
     send(Picture, display, SmallFigure, point(X - Size / 4, Y + Size / 4)).
+
+
+locate_answer(X1, X2, X3):-
+    random(0, 3, R),
+    X1 is -50 + 150 * (R + 1),
+    X2 is -50 + 150 * (mod((R + 1), 3) + 1),
+    X3 is -50 + 150 * (mod((R + 2), 3) + 1),
+    asserta(answer(R + 1)).
 
