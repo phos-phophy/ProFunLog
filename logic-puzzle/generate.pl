@@ -3,6 +3,15 @@ complexity(1, 'Logic puzzle: Medium complexity').
 complexity(2, 'Logic puzzle: High complexity').
 
 
+pictureQWidth(500).
+pictureQHeight(250).
+pictureAWidth(500).
+pictureAHeight(150).
+
+
+size(100).
+
+
 figure(0, Box, Size):- new(Box, box(Size, Size)).
 figure(1, Circle, Size):- new(Circle, circle(Size)).
 figure(2, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [point(0, 0), point(Size / 2, -Size), point(Size, 0), point(0, 0)]).
@@ -11,6 +20,9 @@ figure(2, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [po
 % 0 - give answer, 1 - see next question
 :- dynamic mode/1.
 mode(0).
+
+
+:- dynamic answer/1.
 
 
 play_menu(Comp):-
@@ -32,9 +44,12 @@ add_question_sub_menu(Dialog, Picture):-
     new(Question, dialog_group('Question')),
     send(Dialog, append, Question),
 
+    pictureQWidth(W),
+    pictureQHeight(H),
+
     new(Picture, picture),
-    send(Picture, width(500)),
-    send(Picture, height(250)),
+    send(Picture, width(W)),
+    send(Picture, height(H)),
     send(Question, append, Picture).
 
 
@@ -42,13 +57,16 @@ add_answer_sub_menu(Dialog, Picture, Select):-
     new(Answer, dialog_group('Possible answers')),
     send(Dialog, append, Answer),
 
+    pictureAWidth(W),
+    pictureAHeight(H),
+
     new(Picture, picture),
-    send(Picture, width(500)),
-    send(Picture, height(150)),
+    send(Picture, width(W)),
+    send(Picture, height(H)),
     send(Answer, append, Picture),
 
     new(Select, menu('Your answer')),
-    send_list(Select, append, [1, 2, 3, 4]),
+    send_list(Select, append, [1, 2, 3]),
     send(Answer, append, Select).
 
 
@@ -80,11 +98,12 @@ ok_button(PictureQ, PictureA, 1, Comp, _):-
     generate_question(PictureQ, PictureA, Comp).
 
 
-% Select?selection
-% get(Select, selection, UserAnswer)
-ok_button(PictureQ, PictureA, 0, Comp, Select):-
-    % select right answer
-    % select wrong answer
+ok_button(_, PictureA, 0, _, Select):-
+    get(Select, selection, UserAnswer),
+    
+    answer(Answer),
+    draw_line(Answer, Answer, PictureA),
+    draw_line(UserAnswer, Answer, PictureA),
 
     asserta(mode(1)),
     retract(mode(0)).
@@ -93,22 +112,19 @@ ok_button(PictureQ, PictureA, 0, Comp, Select):-
 generate_question(PictureQ, PictureA, _):-
     get_types(0, 3, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8),
 
-    Size is 100,
-    get(PictureQ, size, SzQ), get(SzQ, height, HQ),
-    HeightQ is HQ / 2 - Size / 2,
+    size(Size), pictureQHeight(HQ), HeightQ is HQ / 2 - Size / 2,
 
-    add_simple_figure(PictureQ, Type1, Type2, 100, HeightQ, Size),
-    add_simple_figure(PictureQ, Type2, Type1, 250, HeightQ, Size),
-    add_simple_figure(PictureQ, Type3, Type4, 400, HeightQ, Size),
+    add_simple_figure(PictureQ, Type1, Type2, 100, HeightQ),
+    add_simple_figure(PictureQ, Type2, Type1, 250, HeightQ),
+    add_simple_figure(PictureQ, Type3, Type4, 400, HeightQ),
 
-    get(PictureA, size, SzA), get(SzA, height, HA),
-    HeightA is HA / 2 - Size / 2,
+    pictureAHeight(HA), HeightA is HA / 2 - Size / 2,
 
     locate_answer(X1, X2, X3),
 
-    add_simple_figure(PictureA, Type4, Type3, X1, HeightA, Size),
-    add_simple_figure(PictureA, Type5, Type6, X2, HeightA, Size),
-    add_simple_figure(PictureA, Type7, Type8, X3, HeightA, Size).
+    add_simple_figure(PictureA, Type4, Type3, X1, HeightA),
+    add_simple_figure(PictureA, Type5, Type6, X2, HeightA),
+    add_simple_figure(PictureA, Type7, Type8, X3, HeightA).
 
 
 get_types(From, To, Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8):-
@@ -134,7 +150,9 @@ check_types(Type1, Type2, Type3, Type4, Type5, Type6, Type7, Type8):-
     diff_pair(Type7, Type8, Type3, Type4).
     
 
-add_simple_figure(Picture, TypeBig, TypeSmall, X, Y, Size):-
+add_simple_figure(Picture, TypeBig, TypeSmall, X, Y):-
+    size(Size),
+
     figure(TypeBig, BigFigure, Size),
     figure(TypeSmall, SmallFigure, Size / 2),
     
@@ -149,3 +167,15 @@ locate_answer(X1, X2, X3):-
     X3 is -50 + 150 * (mod((R + 2), 3) + 1),
     asserta(answer(R + 1)).
 
+
+draw_line(Answer1, Answer2, Picture):-
+    size(Size),
+    Aside is Size / 2,
+    Center is -50 + 150 * Answer1,
+    pictureAHeight(H), Height is H / 2 + Size *3 / 4,
+
+    new(Line, path),
+    send_list(Line, append, [point(Center - Aside, Height), point(Center + Aside, Height)]),
+    (Answer1 =:= Answer2 -> send(Line, colour, colour(green)) ; send(Line, colour, colour(red))),
+
+    send(Picture, display, Line).
