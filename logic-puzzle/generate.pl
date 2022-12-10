@@ -1,3 +1,8 @@
+complexity(0, 'Logic puzzle: Low complexity').
+complexity(1, 'Logic puzzle: Medium complexity').
+complexity(2, 'Logic puzzle: High complexity').
+
+
 pictureQWidth(500).
 pictureQHeight(250).
 pictureAWidth(500).
@@ -26,7 +31,8 @@ mode(0).
 
 
 play_menu(Comp):-
-    new(Frame, frame('Logic puzzle')),
+    complexity(Comp, Title),
+    new(Frame, frame(Title)),
 
     new(Dialog, dialog),
     add_question_sub_menu(Dialog, PictureQ),
