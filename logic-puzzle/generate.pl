@@ -7,6 +7,9 @@ pictureAHeight(150).
 size(100).
 
 
+showAnswerText('Show answer').
+
+
 figure(0, Box, Size):- new(Box, box(Size, Size)).
 figure(1, Circle, Size):- new(Circle, circle(Size)).
 figure(2, Triangle, Size):- new(Triangle, path), send_list(Triangle, append, [point(0, 0), point(Size / 2, -Size), point(Size, 0), point(0, 0)]).
@@ -61,8 +64,10 @@ add_answer_sub_menu(Dialog, Picture, Select):-
     send(Picture, height(H)),
     send(Answer, append, Picture),
 
+    showAnswerText(Text),
+
     new(Select, menu('Your answer')),
-    send_list(Select, append, [1, 2, 3]),
+    send_list(Select, append, [1, 2, 3, Text]),
     send(Answer, append, Select).
 
 
@@ -97,9 +102,9 @@ ok_button(PictureQ, PictureA, 1, Comp, _):-
 ok_button(_, PictureA, 0, _, Select):-
     get(Select, selection, UserAnswer),
     
-    answer(Answer),
-    draw_line(Answer, Answer, PictureA),
-    draw_line(UserAnswer, Answer, PictureA),
+    answer(RightAnswer),
+    draw_line(RightAnswer, RightAnswer, PictureA),  % highlight correct answer
+    draw_line(UserAnswer, RightAnswer, PictureA),  % highlight wrong answer if there is
 
     asserta(mode(1)),
     retract(mode(0)).
@@ -169,6 +174,8 @@ locate_answer(X1, X2, X3):-
 
 
 draw_line(Answer1, Answer2, Picture):-
+    showAnswerText(Answer1);
+
     size(Size),
     Aside is Size / 2,
     Center is -50 + 150 * Answer1,
