@@ -1,24 +1,11 @@
-:- use_module(library(pce)). 
-:- consult('./generate.pl').
-:- initialization start.
-
-
-start:- 
-    new(Frame, frame('Logic puzzle')),
-
-    main_menu(Dialog),
-
-    send(Frame, append, Dialog),
-    send(Frame, open).
-
-
+% draw main menu interface
 main_menu(Dialog):-
 
     new(Dialog, dialog),
     send(Dialog, width(700)),
     send(Dialog, height(700)),
- 
-    send(Dialog, append, bitmap('./logo.xpm')),
+
+    send(Dialog, append, bitmap('./resources/logo.xpm')),
 
     new(Menu, dialog_group('')),
     send(Dialog, append, Menu),
@@ -33,4 +20,7 @@ main_menu(Dialog):-
 
     send(Menu, append, button('Exit', message(Dialog, destroy))).
 
+
+% destroy main menu and call play_menu to draw play menu
 play_menu_(Dialog, Complexity):- send(Dialog, destroy), play_menu(Complexity).
+
