@@ -3,7 +3,7 @@ main_menu(Dialog):-
 
     new(Dialog, dialog),
     send(Dialog, width(700)),
-    send(Dialog, height(700)),
+    send(Dialog, height(480)),
 
     send(Dialog, append, bitmap('./resources/logo.xpm')),
 
