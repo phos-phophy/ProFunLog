@@ -4,6 +4,7 @@
 :- consult('./mode/question.pl').
 :- consult('./mode/answer.pl').
 :- consult('./utils.pl').
+:- consult('./figures.pl').
 :- initialization start.
 
 
