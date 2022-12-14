@@ -1,10 +1,10 @@
 :- use_module(library(pce)). 
 :- consult('./menu/main.pl').
 :- consult('./menu/play.pl').
-:- consult('./mode/question.pl').
-:- consult('./mode/answer.pl').
+:- consult('./figure/__init__.pl').
+:- consult('./menu/__init__.pl').
+:- consult('./mode/__init__.pl').
 :- consult('./utils.pl').
-:- consult('./figures.pl').
 :- initialization start.
 
 

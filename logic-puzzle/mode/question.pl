@@ -1,6 +1,3 @@
-size(100).
-
-
 :- dynamic answer/1.
 
 
@@ -44,6 +41,7 @@ locate_answer(X1, X2, X3):-
     asserta(answer(R + 1)).
 
 
+% draw figure in the specified location
 draw_figure(Picture, DescB, DescS, X, Y):-
     size(Size),
 
@@ -52,3 +50,4 @@ draw_figure(Picture, DescB, DescS, X, Y):-
 
     send(Picture, display, BigFigure, point(X - Size / 2, Y)),
     send(Picture, display, SmallFigure, point(X - Size / 4, Y + Size / 4)).
+
