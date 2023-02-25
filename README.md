@@ -8,3 +8,6 @@ lisp\_fp - lisp final project
 ## 7th semester
 - prolog_homework
 - logic-puzzle - desktop application
+
+## 8th semester
+- solar-system
