@@ -20,8 +20,12 @@ generate_desc(Desc, Comp):-
     generate_type(Type, Comp),
     generate_bourder_colour(BColourInd, Comp),
     generate_inner_colour(IColourInd, Comp),
+    
+    not(same(BColourInd, IColourInd)),
 
-    Desc = [Type, BColourInd, IColourInd].
+    Desc = [Type, BColourInd, IColourInd];
+
+    generate_desc(Desc, Comp).
 
 
 % low - 3 types of shape

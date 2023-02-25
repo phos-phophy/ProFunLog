@@ -39,6 +39,7 @@ change_desc_(Desc11, Desc12, Desc21, Desc12, 2, Comp):-
     Desc11 = [Type11, BColourInd11, IColourInd11],
     Desc21 = [Type11, BColourInd, IColourInd11],
 
+    not(same(BColourInd, IColourInd11)),
     not(same(BColourInd11, BColourInd));
 
     change_desc_(Desc11, Desc12, Desc21, Desc12, 2, Comp).
@@ -49,6 +50,7 @@ change_desc_(Desc11, Desc12, Desc11, Desc22, 3, Comp):-
     Desc12 = [Type12, BColourInd12, IColourInd12],
     Desc22 = [Type12, BColourInd, IColourInd12],
 
+    not(same(BColourInd, IColourInd12)),
     not(same(BColourInd12, BColourInd));
 
     change_desc_(Desc11, Desc12, Desc11, Desc22, 3, Comp).
@@ -59,6 +61,7 @@ change_desc_(Desc11, Desc12, Desc21, Desc12, 4, Comp):-
     Desc11 = [Type11, BColourInd11, IColourInd11],
     Desc21 = [Type11, BColourInd11, IColourInd],
 
+    not(same(BColourInd11, IColourInd)),
     not(same(IColourInd11, IColourInd));
 
     change_desc_(Desc11, Desc12, Desc21, Desc12, 4, Comp).
@@ -68,7 +71,8 @@ change_desc_(Desc11, Desc12, Desc11, Desc22, 5, Comp):-
 
     Desc12 = [Type12, BColourInd12, IColourInd12],
     Desc22 = [Type12, BColourInd12, IColourInd],
-
+    
+    not(same(IColourInd, BColourInd12)),
     not(same(IColourInd12, IColourInd));
 
     change_desc_(Desc11, Desc12, Desc11, Desc22, 5, Comp).
