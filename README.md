@@ -10,4 +10,4 @@ lisp\_fp - lisp final project
 - logic-puzzle - desktop application
 
 ## 8th semester
-- solar-system
+- solar_system
