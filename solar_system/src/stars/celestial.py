@@ -1,4 +1,5 @@
-from .state import State
+import numpy as np
+from state import State
 
 
 class CelestialBody(State):
@@ -24,3 +25,9 @@ class CelestialBody(State):
     @property
     def radius(self):
         return self._radius
+
+    def get_position(self):
+        return np.array([self.x, self.y, self.speed_x, self.speed_y])
+
+    def set_position(self, position: np.ndarray):
+        self.x, self.y, self.speed_x, self.speed_y = position
