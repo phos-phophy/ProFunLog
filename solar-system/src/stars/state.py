@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List
 
 
@@ -11,11 +12,12 @@ class State:
         return self._states
 
     def set_state(self, idx: int) -> None:
-        for attr, value in self._states[idx].items():
-            self.__setattr__(attr, value)
+        new_state = self._states[idx]
+        new_state['_states'] = self._states
+        self.__dict__ = new_state
 
     def save_state(self) -> None:
-        state = self.__dict__
+        state = deepcopy(self.__dict__)
         state.pop('_states')
         self._states.append(state)
 
