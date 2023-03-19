@@ -115,6 +115,7 @@ class SolarGUI(tk.Tk):
         self._simulate = False
 
     def reset(self):
+        self.cnv.delete(tk.ALL)
         self._solar_system.reset()
 
     def get_coordinates(self, body: CelestialBody):
@@ -132,7 +133,7 @@ class SolarGUI(tk.Tk):
         return w_center - radius + x, h_center - radius + y, w_center + radius + x, h_center + radius + y
 
     def write(self):
-        self.cnv.delete(tk.ALL)
+        # self.cnv.delete(tk.ALL)
 
         star = self._solar_system.star
         self.cnv.create_oval(*self.get_coordinates(star), fill=star.color, outline=star.color)

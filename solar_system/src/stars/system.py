@@ -10,6 +10,7 @@ G = 6.67 * 10 ** (-20)  # 'cause we work with kilometers not meters
 
 SUN = CelestialBody('Sun', 'yellow', 1.98 * 10 ** 30, 695.7 * 10 ** 3, 0, 0, 0, 0)  # https://en.wikipedia.org/wiki/Sun
 EARTH = CelestialBody('Earth', 'green', 5.972168 * 10 ** 24, 6371, 152097597, 0, 0, -30.2)  # https://en.wikipedia.org/wiki/Earth
+# JUST = CelestialBody('Just', 'red', 5.972168 * 10 ** 24, 3000, 102097597, 0, -4, -3.2)
 
 
 class SolarSystem(State):
@@ -17,6 +18,9 @@ class SolarSystem(State):
 
         self._star = SUN
         self._planets = [EARTH]
+
+        self._prev_bodies = []
+        self._g_weights = 0
 
         self._step_size = step_size
 
@@ -32,9 +36,20 @@ class SolarSystem(State):
         return self._planets
 
     @property
+    def bodies(self):
+        return [self.star] + self.planets
+
+    @property
     def states(self):
         planet_states = {planet.name: planet.states for planet in self._planets}
         return {self._star.name: self._star.states, **planet_states}
+
+    @property
+    def g_weights(self):
+        if self.bodies != self._prev_bodies:
+            self._prev_bodies = self.bodies
+            self._g_weights = G * np.array([body.weight for body in self.bodies])
+        return self._g_weights
 
     def set_state(self, idx: int) -> None:
         self._star.set_state(idx)
@@ -68,29 +83,15 @@ class SolarSystem(State):
             result[0::4] = u[2::4]
             result[1::4] = u[3::4]
 
-            bodies = [self.star] + self.planets
+            x_pos = u[0::4]
+            y_pos = u[1::4]
+            pos = np.stack([x_pos, y_pos], axis=1)
 
-            dists = [[0] * len(bodies) for _ in range(len(bodies))]
-            x_dists = [[0] * len(bodies) for _ in range(len(bodies))]
-            y_dists = [[0] * len(bodies) for _ in range(len(bodies))]
+            x_dists = x_pos[None, :] - x_pos[:, None]
+            y_dists = y_pos[None, :] - y_pos[:, None]
+            distances = np.linalg.norm(pos[:, None, :] - pos[None, :, :], axis=-1) ** 3
 
-            for i, body_1 in enumerate(bodies):
-                for j, body_2 in enumerate(bodies[i + 1:], start=i + 1):
-                    dists[i][j] = body_1.distance_to(body_2)
-                    dists[j][i] = dists[i][j]
-
-                    x_dists[i][j] = (body_2.x - body_1.x)
-                    x_dists[j][i] = -x_dists[i][j]
-
-                    y_dists[i][j] = (body_2.y - body_1.y)
-                    y_dists[j][i] = -y_dists[i][j]
-
-            x_dists = np.array(x_dists)
-            y_dists = np.array(y_dists)
-            distances: np.ndarray = np.array(dists) ** 3
-
-            weights = np.array([body.weight for body in bodies])
-            matrix = np.divide(G * weights, distances, where=distances != 0)
+            matrix = np.divide(self.g_weights, distances, where=distances != 0)
 
             result[2::4] = np.sum(matrix * x_dists, axis=1)
             result[3::4] = np.sum(matrix * y_dists, axis=1)
