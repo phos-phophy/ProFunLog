@@ -1,12 +1,12 @@
 import numpy as np
-from celestial import CelestialBody
+from solar_system.src.stars.celestial import CelestialBody
 from solar_system.src.runge_kutta import RungeKuttaMethod
-from state import State
+from solar_system.src.stars.state import State
 
 G = 6.67 * 10 ** (-11)
 
-SUN = CelestialBody('Sun', 1.98 * 10 ** 30, 695.7 * 10 ** 6, 0, 0, 0, 0)  # https://en.wikipedia.org/wiki/Sun
-EARTH = CelestialBody('Earth', 5.972168 * 10 ** 24, 6371 * 10 ** 3, 1, 1, 1, 1)  # https://en.wikipedia.org/wiki/Earth
+SUN = CelestialBody('Sun', 'yellow', 1.98 * 10 ** 30, 695.7 * 10 ** 6, 0, 0, 0, 0)  # https://en.wikipedia.org/wiki/Sun
+EARTH = CelestialBody('Earth', 'green', 5.972168 * 10 ** 24, 6371 * 10 ** 3, 152097597000, 0, 1, 1)  # https://en.wikipedia.org/wiki/Earth
 
 
 class SolarSystem(State):
@@ -19,6 +19,14 @@ class SolarSystem(State):
 
         super(SolarSystem, self).__init__()
         del self._states
+
+    @property
+    def star(self):
+        return self._star
+
+    @property
+    def planets(self):
+        return self._planets
 
     @property
     def states(self):

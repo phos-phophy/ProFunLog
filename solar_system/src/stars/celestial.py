@@ -1,10 +1,11 @@
 import numpy as np
-from state import State
+from solar_system.src.stars.state import State
 
 
 class CelestialBody(State):
-    def __init__(self, name: str, weight: int, radius: int, x: float, y: float, speed_x: float, speed_y: float):
+    def __init__(self, name: str, color: str, weight: int, radius: int, x: float, y: float, speed_x: float, speed_y: float):
         self._name = name
+        self._color = color
         self._weight = weight
         self._radius = radius
         self.x = x
@@ -17,6 +18,10 @@ class CelestialBody(State):
     @property
     def name(self):
         return self._name
+
+    @property
+    def color(self):
+        return self._color
 
     @property
     def weight(self):
