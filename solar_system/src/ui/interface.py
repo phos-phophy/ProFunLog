@@ -2,15 +2,15 @@ import tkinter as tk
 
 from solar_system.src.stars import CelestialBody, SolarSystem
 
-SCALE = 10 ** 9
-DELAY = 50
+SCALE = 10 ** 6
+DELAY = 1
 
 
 class SolarGUI(tk.Tk):
     def __init__(self):
         super(SolarGUI, self).__init__()
 
-        self._solar_system = SolarSystem(1)
+        self._solar_system = SolarSystem(1000)
         self._simulate = False
 
         self.__configure_main_window()
@@ -125,9 +125,6 @@ class SolarGUI(tk.Tk):
         w_center = (bounds[2] - bounds[0]) // 2
         h_center = (bounds[3] - bounds[1]) // 2
 
-        print(w_center)
-        print(h_center)
-
         radius = max(body.radius // SCALE, 1)
         x = body.x // SCALE
         y = body.y // SCALE
@@ -145,7 +142,7 @@ class SolarGUI(tk.Tk):
 
     def on_timer(self):
         if self._simulate:
-            # self._solar_system.step()
+            self._solar_system.step()
             self.write()
             self.after(DELAY, self.on_timer)
 

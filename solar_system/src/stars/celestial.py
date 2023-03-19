@@ -1,5 +1,11 @@
+import math
+from typing import TypeVar
+
 import numpy as np
+
 from solar_system.src.stars.state import State
+
+_CelestialBody = TypeVar('_CelestialBody', bound='CelestialBody')
 
 
 class CelestialBody(State):
@@ -36,3 +42,6 @@ class CelestialBody(State):
 
     def set_position(self, position: np.ndarray):
         self.x, self.y, self.speed_x, self.speed_y = position
+
+    def distance_to(self, other: _CelestialBody):
+        return math.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
