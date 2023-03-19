@@ -70,7 +70,7 @@ class SolarSystem(State):
     def step(self):
         u = np.hstack([self._star.get_position(), *[planet.get_position() for planet in self.planets]])
 
-        u = RungeKuttaMethod.solve(0, u, self.get_f(), self._step_size)
+        u = RungeKuttaMethod.solve_4(0, u, self.get_f(), self._step_size)
 
         self._star.set_position(u[:4])
         for planet_idx, planet in enumerate(self.planets, start=1):

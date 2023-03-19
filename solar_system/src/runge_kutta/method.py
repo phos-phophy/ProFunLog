@@ -6,7 +6,14 @@ import numpy as np
 class RungeKuttaMethod:
 
     @classmethod
-    def solve(cls, x: float, u: np.ndarray, f: Callable[[float, np.ndarray], np.ndarray], h: float) -> np.ndarray:
+    def solve_2(cls, x: float, u: np.ndarray, f: Callable[[float, np.ndarray], np.ndarray], h: float) -> np.ndarray:
+        k1 = f(x, u)
+        k2 = f(x + h, u + h * k1)
+
+        return u + h * (k1 + k2) / 2
+
+    @classmethod
+    def solve_4(cls, x: float, u: np.ndarray, f: Callable[[float, np.ndarray], np.ndarray], h: float) -> np.ndarray:
 
         k1 = f(x, u)
         k2 = f(x + h / 2, u + h / 2 * k1)
