@@ -1,4 +1,3 @@
-import math
 from typing import TypeVar
 
 import numpy as np
@@ -18,7 +17,6 @@ class CelestialBody(State):
         self.y = y
         self.speed_x = speed_x
         self.speed_y = speed_y
-        self.trace = []
 
         super(CelestialBody, self).__init__()
 
@@ -42,5 +40,4 @@ class CelestialBody(State):
         return np.array([self.x, self.y, self.speed_x, self.speed_y])
 
     def set_position(self, position: np.ndarray):
-        self.trace.extend([self.x, self.y])
         self.x, self.y, self.speed_x, self.speed_y = position

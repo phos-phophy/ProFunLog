@@ -1,13 +1,19 @@
 import tkinter as tk
 
-import numpy as np
-
 from solar_system.src.stars import CelestialBody, SolarSystem
 
 SCALE = 10 ** 6
 SCALE_CHANGE = 10 ** 4
 SCALE_MIN = 10 ** 4
 DELAY = 1
+
+MOVE_X = 30
+MOVE_Y = 30
+
+LEFT_CURSOR_KEY = "Left"
+RIGHT_CURSOR_KEY = "Right"
+UP_CURSOR_KEY = "Up"
+DOWN_CURSOR_KEY = "Down"
 
 
 class SolarGUI(tk.Tk):
@@ -17,6 +23,8 @@ class SolarGUI(tk.Tk):
         self._solar_system = SolarSystem(1000)
         self._simulate = False
         self._scale = SCALE
+        self._x_diff = 0
+        self._y_diff = 0
 
         self.__configure_main_window()
         self.__configure_comet_frame()
@@ -26,6 +34,8 @@ class SolarGUI(tk.Tk):
 
         self._drawn_bodies_ids = {}
         self._drawn_bodies_coordinates = {}
+
+        self.bind_all("<Key>", self.on_key_pressed)
 
         self.draw()
 
@@ -126,6 +136,9 @@ class SolarGUI(tk.Tk):
         self._simulate = False
 
     def reset(self):
+        self._x_diff = 0
+        self._y_diff = 0
+        self._scale = SCALE
         self._solar_system.reset()
         self.draw()
 
@@ -140,16 +153,10 @@ class SolarGUI(tk.Tk):
     def get_body_coordinates(self, body: CelestialBody, w_center: int, h_center: int):
 
         radius = max(body.radius // self._scale, 1)
-        x = body.x // self._scale
-        y = body.y // self._scale
+        x = body.x // self._scale + self._x_diff
+        y = body.y // self._scale + self._y_diff
 
         return w_center - radius + x, h_center - radius + y, w_center + radius + x, h_center + radius + y
-
-    def get_body_trace_coordinates(self, body: CelestialBody, w_center: int, h_center: int):
-        coordinates = np.array(list(map(lambda x: x // self._scale, body.trace)))
-        coordinates[::2] += w_center
-        coordinates[1::2] += h_center
-        return tuple(coordinates)
 
     def draw(self):
 
@@ -163,7 +170,6 @@ class SolarGUI(tk.Tk):
 
         for planet in self._solar_system.planets:
             self.draw_body(planet, w_center, h_center)
-            self.draw_trace(planet, w_center, h_center)
 
     def draw_body(self, body: CelestialBody, w_center, h_center):
         coordinates = self.get_body_coordinates(body, w_center, h_center)
@@ -174,23 +180,26 @@ class SolarGUI(tk.Tk):
             self._drawn_bodies_coordinates[body.name] = coordinates
             self._drawn_bodies_ids[body.name] = self.cnv.create_oval(*coordinates, fill=body.color, outline=body.color)
 
-    def draw_trace(self, body: CelestialBody, w_center, h_center):
-        name = f'{body.name}_trace'
-        coordinates = self.get_body_trace_coordinates(body, w_center, h_center)
-        old_coordinates = self._drawn_bodies_coordinates.get(name, tuple())
-        if len(coordinates) != len(old_coordinates) or coordinates != old_coordinates:
-            body_id = self._drawn_bodies_ids.get(name, None)
-            if body_id:
-                self.cnv.delete(body_id)
-            if len(body.trace) > 2:
-                self._drawn_bodies_coordinates[name] = coordinates
-                self._drawn_bodies_ids[name] = self.cnv.create_line(coordinates, fill=body.color)
-
     def on_timer(self):
         if self._simulate:
             self._solar_system.step()
             self.draw()
             self.after(DELAY, self.on_timer)
+
+    def on_key_pressed(self, e):
+        key = e.keysym
+
+        if key == LEFT_CURSOR_KEY:
+            self._x_diff += MOVE_X
+
+        if key == RIGHT_CURSOR_KEY:
+            self._x_diff -= MOVE_X
+
+        if key == UP_CURSOR_KEY:
+            self._y_diff += MOVE_Y
+
+        if key == DOWN_CURSOR_KEY:
+            self._y_diff -= MOVE_Y
 
 
 if __name__ == '__main__':
