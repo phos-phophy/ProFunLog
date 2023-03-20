@@ -33,6 +33,7 @@ class SolarGUI(tk.Tk):
         self.__configure_canvas()
 
         self._drawn_bodies_ids = {}
+        self._drawn_names_ids = {}
         self._drawn_bodies_coordinates = {}
 
         self.bind_all("<Key>", self.on_key_pressed)
@@ -175,10 +176,16 @@ class SolarGUI(tk.Tk):
         coordinates = self.get_body_coordinates(body, w_center, h_center)
         if self._drawn_bodies_coordinates.get(body.name, []) != coordinates:
             body_id = self._drawn_bodies_ids.get(body.name, None)
+            name_id = self._drawn_names_ids.get(body.name, None)
             if body_id:
                 self.cnv.delete(body_id)
+            if name_id:
+                self.cnv.delete(name_id)
             self._drawn_bodies_coordinates[body.name] = coordinates
             self._drawn_bodies_ids[body.name] = self.cnv.create_oval(*coordinates, fill=body.color, outline=body.color)
+
+            text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
+            self._drawn_names_ids[body.name] = self.cnv.create_text(*text_coordinates, text=body.name, fill='white')
 
     def on_timer(self):
         if self._simulate:
@@ -200,6 +207,8 @@ class SolarGUI(tk.Tk):
 
         if key == DOWN_CURSOR_KEY:
             self._y_diff -= MOVE_Y
+
+        self.draw()
 
 
 if __name__ == '__main__':
