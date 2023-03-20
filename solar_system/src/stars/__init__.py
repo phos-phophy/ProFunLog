@@ -1,9 +1,9 @@
 from .celestial import CelestialBody
-from .state import State
+from .state import ObjectState
 from .system import SolarSystem
 
 __all__ = [
     "CelestialBody",
     "SolarSystem",
-    "State"
+    "ObjectState"
 ]

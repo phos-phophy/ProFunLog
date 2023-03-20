@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import List
 
 
-class State:
+class ObjectState:
     def __init__(self):
         self._states: List[dict] = []
         self.save_state()

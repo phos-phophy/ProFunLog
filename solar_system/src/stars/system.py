@@ -4,7 +4,7 @@ import numpy as np
 
 from solar_system.src.runge_kutta import RungeKuttaMethod
 from solar_system.src.stars.celestial import CelestialBody
-from solar_system.src.stars.state import State
+from solar_system.src.stars.state import ObjectState
 
 G = 6.67 * 10 ** (-20)  # 'cause we work with kilometers not meters
 
@@ -16,7 +16,7 @@ MOON = CelestialBody('Moon', 'white', 0.073 * 10 ** 24, 1738, 152503097, 0, 0, -
 # JUST = CelestialBody('Just', 'red', 5.972168 * 10 ** 24, 3000, 102097597, 0, -4, -3.2)
 
 
-class SolarSystem(State):
+class SolarSystem(ObjectState):
     def __init__(self, step_size: float):
 
         self.__init_default()

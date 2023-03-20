@@ -2,12 +2,12 @@ from typing import TypeVar
 
 import numpy as np
 
-from solar_system.src.stars.state import State
+from solar_system.src.stars.state import ObjectState
 
 _CelestialBody = TypeVar('_CelestialBody', bound='CelestialBody')
 
 
-class CelestialBody(State):
+class CelestialBody(ObjectState):
     def __init__(self, name: str, color: str, weight: int, radius: int, x: float, y: float, speed_x: float, speed_y: float):
         self._name = name
         self._color = color
