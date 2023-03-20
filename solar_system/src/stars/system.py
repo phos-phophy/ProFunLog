@@ -9,7 +9,10 @@ from solar_system.src.stars.state import State
 G = 6.67 * 10 ** (-20)  # 'cause we work with kilometers not meters
 
 SUN = CelestialBody('Sun', 'yellow', 1.98 * 10 ** 30, 695.7 * 10 ** 3, 0, 0, 0, 0)  # https://en.wikipedia.org/wiki/Sun
+MERCURY = CelestialBody('Mercury', 'grey', 0.33 * 10 ** 24, 2439, 47796525, -17396512, -18.27, -50.21)
+VENUS = CelestialBody('Venus', 'white', 4.87 * 10 ** 24, 6052, 0, -107712000, -35.19, 0)
 EARTH = CelestialBody('Earth', 'green', 5.972168 * 10 ** 24, 6371, 152097597, 0, 0, -30.2)  # https://en.wikipedia.org/wiki/Earth
+MOON = CelestialBody('Moon', 'white', 0.073 * 10 ** 24, 1738, 152503097, 0, 0, -31.2)
 # JUST = CelestialBody('Just', 'red', 5.972168 * 10 ** 24, 3000, 102097597, 0, -4, -3.2)
 
 
@@ -26,7 +29,7 @@ class SolarSystem(State):
         self._g_weights = 0
 
         self._star = SUN
-        self._planets = [EARTH]
+        self._planets = [MERCURY, VENUS, EARTH, MOON]
 
     def __init_default(self):
         self._star = None
