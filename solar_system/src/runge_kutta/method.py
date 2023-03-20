@@ -14,7 +14,6 @@ class RungeKuttaMethod:
 
     @classmethod
     def solve_4(cls, x: float, u: np.ndarray, f: Callable[[float, np.ndarray], np.ndarray], h: float) -> np.ndarray:
-
         k1 = f(x, u)
         k2 = f(x + h / 2, u + h / 2 * k1)
         k3 = f(x + h / 2, u + h / 2 * k2)

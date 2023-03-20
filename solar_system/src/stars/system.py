@@ -16,16 +16,21 @@ EARTH = CelestialBody('Earth', 'green', 5.972168 * 10 ** 24, 6371, 152097597, 0,
 class SolarSystem(State):
     def __init__(self, step_size: float):
 
-        self._star = SUN
-        self._planets = [EARTH]
-
-        self._prev_bodies = []
-        self._g_weights = 0
-
-        self._step_size = step_size
+        self.__init_default()
 
         super(SolarSystem, self).__init__()
         del self._states
+
+        self._step_size = step_size
+        self._prev_bodies = []
+        self._g_weights = 0
+
+        self._star = SUN
+        self._planets = [EARTH]
+
+    def __init_default(self):
+        self._star = None
+        self._planets = []
 
     @property
     def star(self):
@@ -57,7 +62,8 @@ class SolarSystem(State):
             planet.set_state(idx)
 
     def save_state(self) -> None:
-        self._star.save_state()
+        if self._star:
+            self._star.save_state()
         for planet in self._planets:
             planet.save_state()
 

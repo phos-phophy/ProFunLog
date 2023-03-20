@@ -12,9 +12,7 @@ class State:
         return self._states
 
     def set_state(self, idx: int) -> None:
-        new_state = self._states[idx]
-        new_state['_states'] = self._states
-        self.__dict__ = new_state
+        self.__dict__.update(self._states[idx])
 
     def save_state(self) -> None:
         state = deepcopy(self.__dict__)
