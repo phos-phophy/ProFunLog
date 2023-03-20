@@ -1,8 +1,12 @@
 import tkinter as tk
 
+import numpy as np
+
 from solar_system.src.stars import CelestialBody, SolarSystem
 
 SCALE = 10 ** 6
+SCALE_CHANGE = 10 ** 4
+SCALE_MIN = 10 ** 4
 DELAY = 1
 
 
@@ -12,6 +16,7 @@ class SolarGUI(tk.Tk):
 
         self._solar_system = SolarSystem(1000)
         self._simulate = False
+        self._scale = SCALE
 
         self.__configure_main_window()
         self.__configure_comet_frame()
@@ -19,7 +24,10 @@ class SolarGUI(tk.Tk):
         self.__configure_button_frame()
         self.__configure_canvas()
 
-        self.write()
+        self._drawn_bodies_ids = {}
+        self._drawn_bodies_coordinates = {}
+
+        self.draw()
 
     def __configure_main_window(self):
         self.title('Solar system')
@@ -106,6 +114,9 @@ class SolarGUI(tk.Tk):
         self.cnv = tk.Canvas(master=self.master, background='black')
         self.cnv.grid(row=0, rowspan=3, column=0, sticky='news')
 
+        tk.Button(master=self.master, text='+', width=1, command=self.decrease_scale).grid(row=0, column=0, sticky='ne')
+        tk.Button(master=self.master, text='-', width=1, command=self.increase_scale).grid(row=0, column=0, sticky='ne', pady=30)
+
     def start(self):
         if self._simulate is False:
             self._simulate = True
@@ -115,10 +126,32 @@ class SolarGUI(tk.Tk):
         self._simulate = False
 
     def reset(self):
-        self.cnv.delete(tk.ALL)
         self._solar_system.reset()
+        self.draw()
 
-    def get_coordinates(self, body: CelestialBody):
+    def increase_scale(self):
+        self._scale += SCALE_CHANGE
+        self.draw()
+
+    def decrease_scale(self):
+        self._scale = max(self._scale - SCALE_CHANGE, SCALE_MIN)
+        self.draw()
+
+    def get_body_coordinates(self, body: CelestialBody, w_center: int, h_center: int):
+
+        radius = max(body.radius // self._scale, 1)
+        x = body.x // self._scale
+        y = body.y // self._scale
+
+        return w_center - radius + x, h_center - radius + y, w_center + radius + x, h_center + radius + y
+
+    def get_body_trace_coordinates(self, body: CelestialBody, w_center: int, h_center: int):
+        coordinates = np.array(list(map(lambda x: x // self._scale, body.trace)))
+        coordinates[::2] += w_center
+        coordinates[1::2] += h_center
+        return tuple(coordinates)
+
+    def draw(self):
 
         self.update()
         bounds = self.grid_bbox(row=0, column=0, col2=0, row2=2)
@@ -126,25 +159,37 @@ class SolarGUI(tk.Tk):
         w_center = (bounds[2] - bounds[0]) // 2
         h_center = (bounds[3] - bounds[1]) // 2
 
-        radius = max(body.radius // SCALE, 1)
-        x = body.x // SCALE
-        y = body.y // SCALE
-
-        return w_center - radius + x, h_center - radius + y, w_center + radius + x, h_center + radius + y
-
-    def write(self):
-        # self.cnv.delete(tk.ALL)
-
-        star = self._solar_system.star
-        self.cnv.create_oval(*self.get_coordinates(star), fill=star.color, outline=star.color)
+        self.draw_body(self._solar_system.star, w_center, h_center)
 
         for planet in self._solar_system.planets:
-            self.cnv.create_oval(*self.get_coordinates(planet), fill=planet.color, outline=planet.color)
+            self.draw_body(planet, w_center, h_center)
+            self.draw_trace(planet, w_center, h_center)
+
+    def draw_body(self, body: CelestialBody, w_center, h_center):
+        coordinates = self.get_body_coordinates(body, w_center, h_center)
+        if self._drawn_bodies_coordinates.get(body.name, []) != coordinates:
+            body_id = self._drawn_bodies_ids.get(body.name, None)
+            if body_id:
+                self.cnv.delete(body_id)
+            self._drawn_bodies_coordinates[body.name] = coordinates
+            self._drawn_bodies_ids[body.name] = self.cnv.create_oval(*coordinates, fill=body.color, outline=body.color)
+
+    def draw_trace(self, body: CelestialBody, w_center, h_center):
+        name = f'{body.name}_trace'
+        coordinates = self.get_body_trace_coordinates(body, w_center, h_center)
+        old_coordinates = self._drawn_bodies_coordinates.get(name, tuple())
+        if len(coordinates) != len(old_coordinates) or coordinates != old_coordinates:
+            body_id = self._drawn_bodies_ids.get(name, None)
+            if body_id:
+                self.cnv.delete(body_id)
+            if len(body.trace) > 2:
+                self._drawn_bodies_coordinates[name] = coordinates
+                self._drawn_bodies_ids[name] = self.cnv.create_line(coordinates, fill=body.color)
 
     def on_timer(self):
         if self._simulate:
             self._solar_system.step()
-            self.write()
+            self.draw()
             self.after(DELAY, self.on_timer)
 
 
