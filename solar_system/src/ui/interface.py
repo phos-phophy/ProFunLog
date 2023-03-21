@@ -5,18 +5,10 @@ from solar_system.src.ui.canvas import Canvas
 from solar_system.src.ui.comet import CometFrame
 from solar_system.src.ui.satellite import SatelliteFrame
 
-SCALE = 10 ** 6
-SCALE_CHANGE = 10 ** 4
-SCALE_MIN = 10 ** 4
 DELAY = 1
 
 MOVE_X = 3
 MOVE_Y = 3
-
-LEFT_CURSOR_KEY = "Left"
-RIGHT_CURSOR_KEY = "Right"
-UP_CURSOR_KEY = "Up"
-DOWN_CURSOR_KEY = "Down"
 
 
 class SolarGUI(tk.Tk):
@@ -24,11 +16,12 @@ class SolarGUI(tk.Tk):
         super(SolarGUI, self).__init__()
 
         self.__configure_main_window()
-        self.__configure_button_frame()
 
         self.frm_comet = CometFrame(self, 0, 1, 'news')
         self.frm_satellite = SatelliteFrame(self, 1, 1, 'news')
         self.cnv = Canvas(self, 0, 0, 'news', 3, 1)
+
+        self.__configure_button_frame()
 
         self.bind_all("<Key>", self.on_key_pressed)
 
@@ -72,18 +65,15 @@ class SolarGUI(tk.Tk):
         STATE.simulate = False
 
     def reset(self):
-        STATE.x_diff = 0
-        STATE.y_diff = 0
-        STATE.scale = SCALE
-        STATE.solar_system.reset()
+        STATE.reset()
         self.cnv.draw()
 
     def increase_scale(self):
-        STATE.scale += SCALE_CHANGE
+        STATE.increase_scale()
         self.cnv.draw()
 
     def decrease_scale(self):
-        STATE.scale = max(STATE.scale - SCALE_CHANGE, SCALE_MIN)
+        STATE.decrease_scale()
         self.cnv.draw()
 
     def on_timer(self):
@@ -93,18 +83,13 @@ class SolarGUI(tk.Tk):
             self.after(DELAY, self.on_timer)
 
     def on_key_pressed(self, e):
-        key = e.keysym
 
-        if key == LEFT_CURSOR_KEY:
-            STATE.x_diff += MOVE_X
+        actions = {
+            "Left": lambda: STATE.change_x_diff(MOVE_X),
+            "Right": lambda: STATE.change_x_diff(-MOVE_X),
+            "Up": lambda: STATE.change_y_diff(MOVE_Y),
+            "Down": lambda: STATE.change_y_diff(-MOVE_Y)
+        }
 
-        if key == RIGHT_CURSOR_KEY:
-            STATE.x_diff -= MOVE_X
-
-        if key == UP_CURSOR_KEY:
-            STATE.y_diff += MOVE_Y
-
-        if key == DOWN_CURSOR_KEY:
-            STATE.y_diff -= MOVE_Y
-
+        actions.get(e.keysym, lambda: None)()
         self.cnv.draw()

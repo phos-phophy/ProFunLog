@@ -11,7 +11,8 @@ class ObjectState:
         return self._states
 
     def set_state(self, idx: int) -> None:
-        self.__dict__.update(self._states[idx])
+        if idx < len(self._states):
+            self.__dict__.update(self._states[idx])
 
     def save_state(self) -> None:
         state = deepcopy(self.__dict__)
