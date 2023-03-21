@@ -5,7 +5,6 @@ from typing import List
 class ObjectState:
     def __init__(self):
         self._states: List[dict] = []
-        self.save_state()
 
     @property
     def states(self):

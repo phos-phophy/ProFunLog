@@ -19,8 +19,6 @@ MOON = CelestialBody('Moon', 'white', 0.073 * 10 ** 24, 1738, 152503097, 0, 0, -
 class SolarSystem(ObjectState):
     def __init__(self, step_size: float):
 
-        self.__init_default()
-
         super(SolarSystem, self).__init__()
         del self._states
 
@@ -30,10 +28,6 @@ class SolarSystem(ObjectState):
 
         self._star = SUN
         self._planets = [MERCURY, VENUS, EARTH, MOON]
-
-    def __init_default(self):
-        self._star = None
-        self._planets = []
 
     @property
     def star(self):
@@ -60,21 +54,16 @@ class SolarSystem(ObjectState):
         return self._g_weights
 
     def set_state(self, idx: int) -> None:
-        self._star.set_state(idx)
-        for planet in self._planets:
-            planet.set_state(idx)
+        for body in self.bodies:
+            body.set_state(idx)
 
     def save_state(self) -> None:
-        if self._star:
-            self._star.save_state()
-        for planet in self._planets:
-            planet.save_state()
+        for body in self.bodies:
+            body.save_state()
 
     def delete_state(self, idx: int) -> None:
-        if idx < len(self._states):
-            del self._star._states[idx]
-            for planet in self._planets:
-                del planet._states[idx]
+        for body in self.bodies:
+            body.delete_state(idx)
 
     def step(self):
         u = np.hstack([self._star.get_position(), *[planet.get_position() for planet in self.planets]])
