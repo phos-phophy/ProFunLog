@@ -28,6 +28,7 @@ class SolarSystem(ObjectState):
 
         self._star = SUN
         self._planets = [MERCURY, VENUS, EARTH, MOON]
+        self._comets = []
 
     @property
     def star(self):
@@ -38,8 +39,12 @@ class SolarSystem(ObjectState):
         return self._planets
 
     @property
+    def comets(self):
+        return self._comets
+
+    @property
     def bodies(self):
-        return [self.star] + self.planets
+        return [self.star] + self.planets + self.comets
 
     @property
     def states(self):
@@ -65,14 +70,19 @@ class SolarSystem(ObjectState):
         for body in self.bodies:
             body.delete_state(idx)
 
+    def add_comet(self, comet: CelestialBody):
+        self._comets.append(comet)
+
     def step(self):
-        u = np.hstack([self._star.get_position(), *[planet.get_position() for planet in self.planets]])
+        u = np.hstack([body.get_position() for body in self.bodies])
 
         u = RungeKuttaMethod.solve_4(0, u, self.get_f(), self._step_size)
 
         self._star.set_position(u[:4])
-        for planet_idx, planet in enumerate(self.planets, start=1):
-            planet.set_position(u[4 * planet_idx: 4 * planet_idx + 4])
+
+        bodies = self.bodies[1:]
+        for body_idx, body in enumerate(bodies, start=1):
+            body.set_position(u[4 * body_idx: 4 * body_idx + 4])
 
     def get_f(self) -> Callable[[float, np.ndarray], np.ndarray]:
 
