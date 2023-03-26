@@ -13,10 +13,10 @@ class CelestialBody(ObjectState):
         self._color = color
         self._weight = weight
         self._radius = radius
-        self.x = x
-        self.y = y
-        self.speed_x = speed_x
-        self.speed_y = speed_y
+        self._x = x
+        self._y = y
+        self._speed_x = speed_x
+        self._speed_y = speed_y
 
         super(CelestialBody, self).__init__()
 
@@ -36,8 +36,24 @@ class CelestialBody(ObjectState):
     def radius(self):
         return self._radius
 
+    @property
+    def x(self):
+        return self._x
+
+    @property
+    def y(self):
+        return self._y
+
+    @property
+    def speed_x(self):
+        return self._speed_x
+
+    @property
+    def speed_y(self):
+        return self._speed_y
+
     def get_position(self):
         return np.array([self.x, self.y, self.speed_x, self.speed_y])
 
     def set_position(self, position: np.ndarray):
-        self.x, self.y, self.speed_x, self.speed_y = position
+        self._x, self._y, self._speed_x, self._speed_y = position
