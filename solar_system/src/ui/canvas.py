@@ -3,6 +3,9 @@ import tkinter as tk
 from solar_system.src.stars import CelestialBody
 from solar_system.src.ui.app_state import STATE
 
+MOVE_X = 3
+MOVE_Y = 3
+
 
 class Canvas(tk.Canvas):
     def __init__(self, master, row, column, sticky, rowspan=1, columnspan=1):
@@ -14,8 +17,10 @@ class Canvas(tk.Canvas):
         self._drawn_names_ids = {}
         self._drawn_bodies_coordinates = {}
 
+        self.bind("<Key>", self._move_camera)
+
     @staticmethod
-    def get_body_coordinates(body: CelestialBody, w_center: int, h_center: int):
+    def _get_body_coordinates(body: CelestialBody, w_center: int, h_center: int):
 
         radius = max(body.radius // STATE.scale, 1)
         x = body.x // STATE.scale + STATE.x_diff
@@ -31,13 +36,11 @@ class Canvas(tk.Canvas):
         w_center = (bounds[2] - bounds[0]) // 2
         h_center = (bounds[3] - bounds[1]) // 2
 
-        self.draw_body(STATE.solar_system.star, w_center, h_center)
+        for body in STATE.solar_system.bodies:
+            self._draw_body(body, w_center, h_center)
 
-        for planet in STATE.solar_system.planets:
-            self.draw_body(planet, w_center, h_center)
-
-    def draw_body(self, body: CelestialBody, w_center, h_center):
-        coordinates = self.get_body_coordinates(body, w_center, h_center)
+    def _draw_body(self, body: CelestialBody, w_center, h_center):
+        coordinates = self._get_body_coordinates(body, w_center, h_center)
 
         if self._drawn_bodies_coordinates.get(body.name, []) != coordinates:
             body_id = self._drawn_bodies_ids.get(body.name, None)
@@ -53,3 +56,15 @@ class Canvas(tk.Canvas):
 
             text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
             self._drawn_names_ids[body.name] = self.create_text(*text_coordinates, text=body.name, fill='white')
+
+    def _move_camera(self, e):
+
+        actions = {
+            "Left": lambda: STATE.change_x_diff(MOVE_X),
+            "Right": lambda: STATE.change_x_diff(-MOVE_X),
+            "Up": lambda: STATE.change_y_diff(MOVE_Y),
+            "Down": lambda: STATE.change_y_diff(-MOVE_Y)
+        }
+
+        actions.get(e.keysym, lambda: None)()
+        self.draw()
