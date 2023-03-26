@@ -76,7 +76,7 @@ class SolarSystem(ObjectState):
     def step(self):
         u = np.hstack([body.get_position() for body in self.bodies])
 
-        u = RungeKuttaMethod.solve_4(0, u, self.get_f(), self._step_size)
+        u = RungeKuttaMethod.solve_4(0, u, self._get_f(), self._step_size)
 
         self._star.set_position(u[:4])
 
@@ -84,7 +84,7 @@ class SolarSystem(ObjectState):
         for body_idx, body in enumerate(bodies, start=1):
             body.set_position(u[4 * body_idx: 4 * body_idx + 4])
 
-    def get_f(self) -> Callable[[float, np.ndarray], np.ndarray]:
+    def _get_f(self) -> Callable[[float, np.ndarray], np.ndarray]:
 
         def f(_: float, u: np.ndarray) -> np.ndarray:
             result = u.copy()
