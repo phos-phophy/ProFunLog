@@ -10,18 +10,23 @@ class CometFrame(tk.Frame):
 
         self._configure_grid()
         self.grid(row=row, column=column, sticky=sticky)
+
         self._add_interface()
         self._add_button()
 
     def _configure_grid(self):
         self.rowconfigure(index=0, minsize=40, weight=0)
+
         self.rowconfigure(index=1, minsize=30, weight=0)
         self.rowconfigure(index=2, minsize=30, weight=0)
         self.rowconfigure(index=3, minsize=10, weight=0)
+
         self.rowconfigure(index=4, minsize=90, weight=0)
         self.rowconfigure(index=5, minsize=10, weight=0)
+
         self.rowconfigure(index=6, minsize=90, weight=0)
         self.rowconfigure(index=7, minsize=10, weight=0)
+
         self.rowconfigure(index=8, minsize=30, weight=0)
         self.rowconfigure(index=9, minsize=5, weight=0)
 
@@ -36,8 +41,6 @@ class CometFrame(tk.Frame):
 
     def _add_info_interface(self):
         tk.Label(master=self, text='Запуск кометы', font='bold').grid(row=0, column=0, columnspan=3)
-        tk.Label(master=self, text='Масса').grid(row=1, column=0, sticky='w', ipadx=10)
-        tk.Label(master=self, text='Радиус').grid(row=2, column=0, sticky='w', ipadx=10)
 
         self._weight = tk.Entry(master=self)
         self._radius = tk.Entry(master=self)
@@ -45,6 +48,8 @@ class CometFrame(tk.Frame):
         self._weight.grid(row=1, column=1, sticky='ew')
         self._radius.grid(row=2, column=1, sticky='ew')
 
+        tk.Label(master=self, text='Масса').grid(row=1, column=0, sticky='w', ipadx=10)
+        tk.Label(master=self, text='Радиус').grid(row=2, column=0, sticky='w', ipadx=10)
         tk.Label(master=self, text='кг').grid(row=1, column=2, sticky='ew')
         tk.Label(master=self, text='км').grid(row=2, column=2, sticky='ew')
 
@@ -53,6 +58,7 @@ class CometFrame(tk.Frame):
 
         speed_frame.rowconfigure(index=0, minsize=30, weight=0)
         speed_frame.rowconfigure(index=1, minsize=30, weight=0)
+
         speed_frame.columnconfigure(index=0, minsize=80, weight=1)
         speed_frame.columnconfigure(index=1, minsize=170, weight=1)
         speed_frame.columnconfigure(index=2, minsize=50, weight=1)

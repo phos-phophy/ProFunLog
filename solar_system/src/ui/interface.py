@@ -17,14 +17,14 @@ class SolarGUI(tk.Tk):
 
         self._configure_main_window()
 
-        self.frm_comet = CometFrame(self, 0, 1, 'news')
-        self.frm_satellite = SatelliteFrame(self, 1, 1, 'news')
-        self.cnv = Canvas(self, 0, 0, 'news', 3, 1)
+        self._frm_comet = CometFrame(self, 0, 1, 'news')
+        self._frm_satellite = SatelliteFrame(self, 1, 1, 'news')
+        self._cnv = Canvas(self, 0, 0, 'news', 3, 1)
 
         self._configure_button_frame()
         self.bind_all('<Button-1>', self._focus_to_canvas)
 
-        self.cnv.draw()
+        self._cnv.draw()
 
     def _configure_main_window(self):
         self.title('Solar system')
@@ -65,22 +65,22 @@ class SolarGUI(tk.Tk):
 
     def _reset(self):
         STATE.reset()
-        self.cnv.draw()
+        self._cnv.draw()
 
     def _increase_scale(self):
         STATE.increase_scale()
-        self.cnv.draw()
+        self._cnv.draw()
 
     def _decrease_scale(self):
         STATE.decrease_scale()
-        self.cnv.draw()
+        self._cnv.draw()
 
     def _on_timer(self):
         if STATE.simulate:
             STATE.solar_system.step()
-            self.cnv.draw()
+            self._cnv.draw()
             self.after(DELAY, self._on_timer)
 
     def _focus_to_canvas(self, e):
         if isinstance(e.widget, Canvas):
-            self.cnv.focus_set()
+            self._cnv.focus_set()
