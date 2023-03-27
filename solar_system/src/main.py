@@ -1,4 +1,4 @@
-from solar_system.src.ui.interface import SolarGUI
+from solar_system.src.ui import SolarGUI
 
 
 if __name__ == '__main__':

@@ -1,9 +1,9 @@
 import tkinter as tk
 
+from solar_system.src.ui.abstract import AbstractGUI
 from solar_system.src.ui.app_state import STATE
 from solar_system.src.ui.canvas import Canvas
 from solar_system.src.ui.comet import CometFrame
-from solar_system.src.ui.satellite import SatelliteFrame
 
 DELAY = 1
 
@@ -11,18 +11,16 @@ MOVE_X = 3
 MOVE_Y = 3
 
 
-class SolarGUI(tk.Tk):
+class SolarGUI(AbstractGUI):
     def __init__(self):
         super(SolarGUI, self).__init__()
 
         self._configure_main_window()
 
+        self._cnv = Canvas(self, 0, 0, 'news', 3, 2)
         self._frm_comet = CometFrame(self, 0, 1, 'news')
-        self._frm_satellite = SatelliteFrame(self, 1, 1, 'news')
-        self._cnv = Canvas(self, 0, 0, 'news', 3, 1)
 
         self._configure_button_frame()
-        self.bind_all('<Button-1>', self._focus_to_canvas)
 
         self._cnv.draw()
 
@@ -81,6 +79,5 @@ class SolarGUI(tk.Tk):
             self._cnv.draw()
             self.after(DELAY, self._on_timer)
 
-    def _focus_to_canvas(self, e):
-        if isinstance(e.widget, Canvas):
-            self._cnv.focus_set()
+    def get_comet_coordinates(self, x: float, y: float):
+        self._frm_comet.get_coordinates(x, y)

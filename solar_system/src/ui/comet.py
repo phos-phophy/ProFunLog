@@ -1,11 +1,12 @@
 import tkinter as tk
 
-from solar_system.src.ui.app_state import STATE
 from solar_system.src.stars.celestial import CelestialBody
+from solar_system.src.ui.abstract import AbstractGUI
+from solar_system.src.ui.app_state import STATE
 
 
 class CometFrame(tk.Frame):
-    def __init__(self, master, row, column, sticky):
+    def __init__(self, master: AbstractGUI, row: int, column: int, sticky: str):
         super(CometFrame, self).__init__(master=master, relief=tk.SUNKEN, borderwidth=3, padx=10)
 
         self._configure_grid()
@@ -123,3 +124,10 @@ class CometFrame(tk.Frame):
         self._speed_y.delete(0, tk.END)
         self._x.delete(0, tk.END)
         self._y.delete(0, tk.END)
+
+    def get_coordinates(self, x: float, y: float):
+        self._x.delete(0, tk.END)
+        self._y.delete(0, tk.END)
+
+        self._x.insert(0, str(x))
+        self._y.insert(0, str(y))
