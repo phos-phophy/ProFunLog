@@ -1,4 +1,5 @@
 import tkinter as tk
+from functools import partial
 from typing import Optional
 
 from solar_system.src.stars import CelestialBody
@@ -40,8 +41,25 @@ class Canvas(tk.Canvas):
             y = (self._e.y - h_center - STATE.y_diff) * STATE.scale
             self.master.get_comet_coordinates(x, y)
 
-        self._cnv_menu.add_separator()
+        base_solar_system = STATE.solar_system.bodies
+
+        submenu_cnv = tk.Menu(self._cnv_menu)
+        submenu_info = tk.Menu(self._cnv_menu)
+
+        def set_cnv(idx):
+            STATE.set_selected_body_cnv(idx)
+
+        def set_info(idx):
+            STATE.set_selected_body_info(idx)
+
+        for body_idx, body in enumerate(base_solar_system):
+            submenu_cnv.add_command(label=body.name, command=partial(set_cnv, idx=body_idx))
+            submenu_info.add_command(label=body.name, command=partial(set_info, idx=body_idx))
+
         self._cnv_menu.add_command(label="Получить координаты", command=get_coordinates, compound='right')
+        self._cnv_menu.add_separator()
+        self._cnv_menu.add_cascade(label="Зафиксировать камеру на...", menu=submenu_cnv, underline=0)
+        self._cnv_menu.add_cascade(label="Вывести информацию о...", menu=submenu_info, underline=0)
 
         self.bind("<Button-3>", show_menu)
 

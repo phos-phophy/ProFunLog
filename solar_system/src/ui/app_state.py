@@ -12,7 +12,8 @@ class ApplicationState(ObjectState):
         self._solar_system: SolarSystem = SolarSystem(1000)
         self.simulate: bool = False
         self.show_names: bool = True
-        self.selected_body: int = 0
+        self.selected_body_cnv: int = 0
+        self.selected_body_info: int = 0
         self._scale: int = self.SCALE
         self._x_diff: int = 0
         self._y_diff: int = 0
@@ -61,6 +62,12 @@ class ApplicationState(ObjectState):
 
     def change_y_diff(self, value):
         self._y_diff += value
+
+    def set_selected_body_info(self, v: int):
+        self.selected_body_info = v
+
+    def set_selected_body_cnv(self, v: int):
+        self.selected_body_cnv = v
 
 
 STATE = ApplicationState()

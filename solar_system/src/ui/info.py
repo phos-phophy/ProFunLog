@@ -46,7 +46,7 @@ class InformationFrame(tk.Frame):
 
     def update_info(self):
         system = STATE.solar_system
-        body: CelestialBody = system.bodies[STATE.selected_body]
+        body: CelestialBody = system.bodies[STATE.selected_body_info]
 
         star: CelestialBody = system.star
 
