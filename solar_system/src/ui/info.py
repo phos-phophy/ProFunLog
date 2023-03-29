@@ -52,7 +52,7 @@ class InformationFrame(tk.Frame):
 
         self._info.set(f'Информация о {body.name}')
         self._weight.set(f'Масса:   {body.weight}   кг')
-        self._radius.set(f'Радиус:   {body.radius}   км')
+        self._radius.set(f'Радиус:   {body.radius:.0f}   км')
         self._speed_x.set(f'Скорость по X:   {body.speed_x:.0f}   км/с')
         self._speed_y.set(f'Скорость по Y:   {body.speed_y:.0f}   км/с')
         self._x.set(f'Расстояние от Солнца по X:   {body.x - star.x:.0f}   км')

@@ -52,10 +52,19 @@ class Canvas(tk.Canvas):
         def set_info(idx):
             STATE.set_selected_body_info(idx)
 
+        def show_names():
+            STATE.show_names = not STATE.show_names
+            self._show_names.set(STATE.show_names)
+
         for body_idx, body in enumerate(base_solar_system):
             submenu_cnv.add_command(label=body.name, command=partial(set_cnv, idx=body_idx))
             submenu_info.add_command(label=body.name, command=partial(set_info, idx=body_idx))
 
+        self._show_names = tk.BooleanVar()
+        self._show_names.set(STATE.show_names)
+
+        self._cnv_menu.add_checkbutton(label="Названия планет", onvalue=1, offvalue=0, variable=self._show_names, command=show_names)
+        self._cnv_menu.add_separator()
         self._cnv_menu.add_command(label="Получить координаты", command=get_coordinates, compound='right')
         self._cnv_menu.add_separator()
         self._cnv_menu.add_cascade(label="Зафиксировать камеру на...", menu=submenu_cnv, underline=0)
@@ -90,22 +99,28 @@ class Canvas(tk.Canvas):
             self._draw_body(body, w_center, h_center)
 
     def _draw_body(self, body: CelestialBody, w_center: int, h_center: int):
+
+        body_id = self._drawn_bodies_ids.get(body.name, None)
+        name_id = self._drawn_names_ids.get(body.name, None)
+
         coordinates = self._get_body_coordinates(body, w_center, h_center)
+        text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
 
-        if self._drawn_bodies_coordinates.get(body.name, []) != coordinates:
-            body_id = self._drawn_bodies_ids.get(body.name, None)
-            name_id = self._drawn_names_ids.get(body.name, None)
+        change_position = self._drawn_bodies_coordinates.get(body.name, []) != coordinates
 
-            if body_id:
-                self.delete(body_id)
-            if name_id:
-                self.delete(name_id)
-
+        if change_position and body_id:
+            self.coords(body_id, *coordinates)
+        elif change_position:
             self._drawn_bodies_coordinates[body.name] = coordinates
             self._drawn_bodies_ids[body.name] = self.create_oval(*coordinates, fill=body.color, outline=body.color)
 
-            if STATE.show_names:
-                text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
+        if name_id and not STATE.show_names:
+            self.delete(name_id)
+            self._drawn_names_ids.pop(body.name)
+        elif STATE.show_names:
+            if change_position and name_id:
+                self.coords(name_id, *text_coordinates)
+            elif change_position:
                 self._drawn_names_ids[body.name] = self.create_text(*text_coordinates, text=body.name, fill='white')
 
     def _move_camera(self, e: tk.Event):
