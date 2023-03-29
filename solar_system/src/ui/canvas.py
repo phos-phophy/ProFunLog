@@ -84,8 +84,9 @@ class Canvas(tk.Canvas):
             self._drawn_bodies_coordinates[body.name] = coordinates
             self._drawn_bodies_ids[body.name] = self.create_oval(*coordinates, fill=body.color, outline=body.color)
 
-            text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
-            self._drawn_names_ids[body.name] = self.create_text(*text_coordinates, text=body.name, fill='white')
+            if STATE.show_names:
+                text_coordinates = list(map(lambda x: x - 10, coordinates[:2]))
+                self._drawn_names_ids[body.name] = self.create_text(*text_coordinates, text=body.name, fill='white')
 
     def _move_camera(self, e: tk.Event):
 

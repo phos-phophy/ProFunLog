@@ -9,11 +9,13 @@ class ApplicationState(ObjectState):
     def __init__(self):
         super(ApplicationState, self).__init__()
 
-        self._solar_system = SolarSystem(1000)
-        self.simulate = False
-        self._scale = self.SCALE
-        self._x_diff = 0
-        self._y_diff = 0
+        self._solar_system: SolarSystem = SolarSystem(1000)
+        self.simulate: bool = False
+        self.show_names: bool = True
+        self.selected_body: int = 0
+        self._scale: int = self.SCALE
+        self._x_diff: int = 0
+        self._y_diff: int = 0
 
         self.save_state()
 
