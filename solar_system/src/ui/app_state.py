@@ -6,10 +6,13 @@ class ApplicationState(ObjectState):
     SCALE_CHANGE = 10 ** 4
     SCALE_MIN = 10 ** 4
 
+    STEP_SIZE_MAX = 1000
+    STEP_SIZE_MIN = 10
+
     def __init__(self):
         super(ApplicationState, self).__init__()
 
-        self._solar_system: SolarSystem = SolarSystem(1000)
+        self._solar_system: SolarSystem = SolarSystem(self.STEP_SIZE_MAX)
         self.simulate: bool = False
         self.show_names: bool = True
         self.selected_body_cnv: int = 0

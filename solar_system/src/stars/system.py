@@ -31,6 +31,10 @@ class SolarSystem(ObjectState):
         self._comets = []
 
     @property
+    def step_size(self):
+        return self._step_size
+
+    @property
     def star(self):
         return self._star
 
@@ -57,6 +61,10 @@ class SolarSystem(ObjectState):
             self._prev_bodies = self.bodies
             self._g_weights = G * np.array([body.weight for body in self.bodies])
         return self._g_weights
+
+    @step_size.setter
+    def step_size(self, val: float):
+        self._step_size = val
 
     def set_state(self, idx: int) -> None:
         for body in self.bodies:
