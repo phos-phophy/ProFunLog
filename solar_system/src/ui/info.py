@@ -23,6 +23,9 @@ class InformationFrame(tk.Frame):
         self.rowconfigure(index=6, minsize=10, weight=0)
         self.rowconfigure(index=7, minsize=30, weight=0)
         self.rowconfigure(index=8, minsize=30, weight=0)
+        self.rowconfigure(index=9, minsize=10, weight=0)
+
+        self.columnconfigure(index=0, minsize=300, weight=0)
 
     def _configure_info(self):
 

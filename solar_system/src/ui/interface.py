@@ -31,7 +31,7 @@ class SolarGUI(AbstractGUI):
         self.title('Solar system')
 
         self.rowconfigure(index=0, minsize=300, weight=1)
-        self.rowconfigure(index=1, minsize=300, weight=1)
+        self.rowconfigure(index=1, minsize=250, weight=1)
         self.rowconfigure(index=2, minsize=50, weight=0)
 
         self.columnconfigure(index=0, minsize=800, weight=1)
