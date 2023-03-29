@@ -66,9 +66,11 @@ class Canvas(tk.Canvas):
     @staticmethod
     def _get_body_coordinates(body: CelestialBody, w_center: int, h_center: int):
 
+        selected_body = STATE.solar_system.bodies[STATE.selected_body_cnv]
+
         radius = max(body.radius // STATE.scale, 1)
-        x = body.x // STATE.scale + STATE.x_diff
-        y = body.y // STATE.scale + STATE.y_diff
+        x = (body.x - selected_body.x) // STATE.scale + STATE.x_diff
+        y = (body.y - selected_body.y) // STATE.scale + STATE.y_diff
 
         return w_center - radius + x, h_center - radius + y, w_center + radius + x, h_center + radius + y
 
