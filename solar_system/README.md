@@ -16,6 +16,13 @@
 
 ### Celestial bodies, application state and Runge-Kutta method
 
+* `ObjectState` - an abstract class that implements an idea of the object state and describes 4 methods to manage it
+* `CelestialBody` - a base class for all celestial bodies
+* `SolarSystem` - a base class that describes our Solar system with all planets and implements the `step` method to simulate it 
+* `RungeKuttaMethod` - a utility class that solves a system of first-degree differential equations. It's used by `SolarSystem` to solve 
+the equations of the `CelestialBody`'s motion
+* `ApplicationState` - a base class that stores the complete internal state of the application
+
 ```mermaid
 classDiagram
 direction TB
@@ -86,6 +93,16 @@ direction TB
 ```
 
 ### Interface
+
+* `AbstractGUI` - an abstract class that describes basic methods for 
+* `SolarGUI` - a base class that describes the application interface
+* `CometFrame` - a utility class that implements an interface to launch comets
+* `ButtonsFrame` - a utility class that implements an interface for basic buttons
+* `InformationFrame` - a utility class that implements an interface to show a `CelestualBody`'s information
+* `Canvas` - a utility class that displays our Solar system 
+
+Almost all of these classes (except the `AbstractGUI`) use a single global instance of the `ApplicationState` class. In addition, 
+`InformationFrame` and `Canvas` classes use an instances of the `CelestialBody` class. 
 
 ```mermaid
 classDiagram
