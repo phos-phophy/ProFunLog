@@ -52,7 +52,7 @@ class CelestialBody(ObjectState):
     def speed_y(self):
         return self._speed_y
 
-    def get_position(self):
+    def get_position(self) -> np.ndarray:
         return np.array([self.x, self.y, self.speed_x, self.speed_y])
 
     def set_position(self, position: np.ndarray):
