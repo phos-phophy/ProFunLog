@@ -2,19 +2,23 @@
 
 ---
 
-## Install requirements
+## 1. How to use?
+
+### 1.1 Create a virtual environment
+
+`python3 -m venv ./venv`
+
+### 1.2 Install the requirements
 
 `pip install -r requirements.txt`
 
-## Run simulator
+### 1.3 Run the simulator
 
 `python3 src/main.py`
 
----
+## 2. Class diagram
 
-## Class diagram
-
-### Celestial bodies, application state and Runge-Kutta method
+### 2.1 Celestial bodies, application state and Runge-Kutta method
 
 * `ObjectState` - an abstract class that implements an idea of the object state and describes 4 methods to manage it
 * `CelestialBody` - a base class for all celestial bodies
@@ -92,7 +96,7 @@ direction TB
     }
 ```
 
-### Interface
+### 2.2 Interface
 
 * `AbstractGUI` - an abstract class that describes basic methods for 
 * `SolarGUI` - a base class that describes the application interface
