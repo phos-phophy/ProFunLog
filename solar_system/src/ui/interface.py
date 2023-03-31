@@ -18,12 +18,12 @@ class SolarGUI(AbstractGUI):
         self._configure_main_window()
 
         self._cnv = Canvas(self, 0, 0, 'news', 3, 2)
-        self._info = InformationFrame(self, 1, 1, 'news')
+        self._frm_info = InformationFrame(self, 1, 1, 'news')
         self._frm_comet = CometFrame(self, 0, 1, 'news')
-        self._buttons_frame = ButtonsFrame(self, 2, 1, 'news')
+        self._frm_buttons = ButtonsFrame(self, 2, 1, 'news')
 
         self._cnv.draw()
-        self._info.update_info()
+        self._frm_info.update_info()
 
     def _configure_main_window(self):
         self.title('Solar system')
@@ -41,7 +41,7 @@ class SolarGUI(AbstractGUI):
     def on_timer(self):
         if STATE.simulate:
             STATE.solar_system.step()
-            self._info.update_info()
+            self._frm_info.update_info()
             self._cnv.draw()
             self.after(DELAY, self.on_timer)
 
