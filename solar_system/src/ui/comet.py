@@ -1,6 +1,5 @@
 import tkinter as tk
 
-from solar_system.src.stars.celestial import CelestialBody
 from solar_system.src.ui.abstract import AbstractGUI
 from solar_system.src.ui.app_state import STATE
 
@@ -109,9 +108,7 @@ class CometFrame(tk.Frame):
             x = float(self._x.get()) + STATE.solar_system.star.x
             y = float(self._y.get()) + STATE.solar_system.star.y
 
-            comet = CelestialBody('', 'white', weight, radius, x, y, speed_x, speed_y)
-
-            STATE.solar_system.add_comet(comet)
+            STATE.solar_system.add_comet('white', weight, radius, x, y, speed_x, speed_y)
 
             self._delete_text()
         except ValueError:

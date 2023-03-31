@@ -78,7 +78,8 @@ class SolarSystem(ObjectState):
         for body in self.bodies:
             body.delete_state(idx)
 
-    def add_comet(self, comet: CelestialBody):
+    def add_comet(self, color: str, weight: int, radius: int, x: float, y: float, speed_x: float, speed_y: float):
+        comet = CelestialBody('', color, weight, radius, x, y, speed_x, speed_y)
         self._comets.append(comet)
 
     def step(self):
