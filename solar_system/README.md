@@ -1,5 +1,7 @@
 # Solar System
 
+It's a simple simulator of Solar system with all planets and some of their satellites
+
 ---
 
 ## 1. How to use?
