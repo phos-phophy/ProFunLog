@@ -108,11 +108,12 @@ class Canvas(tk.Canvas):
 
         change_position = self._drawn_bodies_coordinates.get(body.name, []) != coordinates
 
-        if change_position and body_id:
-            self.coords(body_id, *coordinates)
-        elif change_position:
+        if change_position:
             self._drawn_bodies_coordinates[body.name] = coordinates
-            self._drawn_bodies_ids[body.name] = self.create_oval(*coordinates, fill=body.color, outline=body.color)
+            if body_id:
+                self.coords(body_id, *coordinates)
+            else:
+                self._drawn_bodies_ids[body.name] = self.create_oval(*coordinates, fill=body.color, outline=body.color)
 
         if name_id and not STATE.show_names:
             self.delete(name_id)
