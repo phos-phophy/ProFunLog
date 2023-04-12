@@ -8,6 +8,8 @@ _CelestialBody = TypeVar('_CelestialBody', bound='CelestialBody')
 
 
 class CelestialBody(ObjectState):
+    """ A base class for all celestial bodies """
+
     def __init__(self, name: str, color: str, weight: int, radius: int, x: float, y: float, speed_x: float, speed_y: float):
         self._name = name
         self._color = color
