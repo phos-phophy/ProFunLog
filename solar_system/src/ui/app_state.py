@@ -1,10 +1,23 @@
 from solar_system.src.stars import SolarSystem, ObjectState
 
 
-class ApplicationState(ObjectState):
-    SCALE = 10 ** 6
-    SCALE_CHANGE = 10 ** 4
-    SCALE_MIN = 10 ** 4
+class Singleton(type):
+    """ A utility metaclass that implements the Singleton pattern by ensuring that only one instance of each subclass is created """
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """ Returns the singleton instance of the class. If it doesn't exist yet, it creates it """
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class ApplicationState(ObjectState, metaclass=Singleton):
+    """ A base class that stores the complete internal state of the application """
+
+    SCALE = 10 ** 2 * 2 ** 13
+    SCALE_DIV = 2
+    SCALE_MIN = 10 ** 2
 
     STEP_SIZE_MAX = 1000
     STEP_SIZE_MIN = 10
@@ -55,10 +68,10 @@ class ApplicationState(ObjectState):
         super(ApplicationState, self).delete_state(idx)
 
     def increase_scale(self):
-        self._scale += self.SCALE_CHANGE
+        self._scale *= self.SCALE_DIV
 
     def decrease_scale(self):
-        self._scale = max(self._scale - self.SCALE_CHANGE, self.SCALE_MIN)
+        self._scale = max(self._scale / self.SCALE_DIV, self.SCALE_MIN)
 
     def change_x_diff(self, value):
         self._x_diff += value
