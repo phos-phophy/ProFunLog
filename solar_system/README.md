@@ -22,7 +22,7 @@ It's a simple simulator of Solar system with all planets and some of their satel
 
 ### 2.1 Celestial bodies, application state and Runge-Kutta method
 
-* `ObjectState` - an abstract class that implements an idea of the object state and describes 4 methods to manage it
+* `ObjectState` - a base class that implements an idea of the object versions by managing its states
 * `CelestialBody` - a base class for all celestial bodies
 * `SolarSystem` - a base class that describes our Solar system with all planets and implements the `step` method to simulate it 
 * `RungeKuttaMethod` - a utility class that solves a system of first-degree differential equations. It's used by `SolarSystem` to solve 
