@@ -34,7 +34,6 @@ classDiagram
 direction TB
 
     class ObjectState {
-        <<Abstract>>
         +states: List[dict]
         +set_state(self, idx: int)
         +save_state(self)
@@ -131,13 +130,12 @@ direction TB
         #_configure_main_window(self)
     }
     
-    SolarGUI o--o CometFrame
-    SolarGUI o--o ButtonsFrame
-    SolarGUI o--o InformationFrame
-    SolarGUI o--o Canvas
+    SolarGUI -- CometFrame
+    SolarGUI -- ButtonsFrame
+    SolarGUI -- InformationFrame
+    SolarGUI -- Canvas
     
     class CometFrame{
-        +master: AbstractGUI
         #_configure_grid(self)
         #_add_interface(self)
         #_add_button(self)
@@ -163,7 +161,6 @@ direction TB
     }
     
     class InformationFrame{
-        +master: AbstractGUI
         #_configure_grid(self)
         #_configure_info(self)
         +update_info(self)
