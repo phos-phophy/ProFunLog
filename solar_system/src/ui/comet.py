@@ -19,16 +19,17 @@ class CometFrame(tk.Frame):
 
         self.rowconfigure(index=1, minsize=30, weight=0)
         self.rowconfigure(index=2, minsize=30, weight=0)
-        self.rowconfigure(index=3, minsize=10, weight=0)
+        self.rowconfigure(index=3, minsize=30, weight=0)
+        self.rowconfigure(index=4, minsize=10, weight=0)
 
-        self.rowconfigure(index=4, minsize=90, weight=0)
-        self.rowconfigure(index=5, minsize=10, weight=0)
+        self.rowconfigure(index=5, minsize=90, weight=0)
+        self.rowconfigure(index=6, minsize=10, weight=0)
 
-        self.rowconfigure(index=6, minsize=90, weight=0)
-        self.rowconfigure(index=7, minsize=10, weight=0)
+        self.rowconfigure(index=7, minsize=90, weight=0)
+        self.rowconfigure(index=8, minsize=10, weight=0)
 
-        self.rowconfigure(index=8, minsize=30, weight=0)
-        self.rowconfigure(index=9, minsize=5, weight=0)
+        self.rowconfigure(index=9, minsize=30, weight=0)
+        self.rowconfigure(index=10, minsize=5, weight=0)
 
         self.columnconfigure(index=0, minsize=60, weight=1)
         self.columnconfigure(index=1, minsize=170, weight=1)
@@ -42,16 +43,19 @@ class CometFrame(tk.Frame):
     def _add_info_interface(self):
         tk.Label(master=self, text='Запуск кометы', font='bold').grid(row=0, column=0, columnspan=3)
 
+        self._name = tk.Entry(master=self)
         self._weight = tk.Entry(master=self)
         self._radius = tk.Entry(master=self)
 
-        self._weight.grid(row=1, column=1, sticky='ew')
-        self._radius.grid(row=2, column=1, sticky='ew')
+        self._name.grid(row=1, column=1, sticky='ew')
+        self._weight.grid(row=2, column=1, sticky='ew')
+        self._radius.grid(row=3, column=1, sticky='ew')
 
-        tk.Label(master=self, text='Масса').grid(row=1, column=0, sticky='w', ipadx=10)
-        tk.Label(master=self, text='Радиус').grid(row=2, column=0, sticky='w', ipadx=10)
-        tk.Label(master=self, text='кг').grid(row=1, column=2, sticky='ew')
-        tk.Label(master=self, text='км').grid(row=2, column=2, sticky='ew')
+        tk.Label(master=self, text='Имя').grid(row=1, column=0, sticky='w', ipadx=10)
+        tk.Label(master=self, text='Масса').grid(row=2, column=0, sticky='w', ipadx=10)
+        tk.Label(master=self, text='Радиус').grid(row=3, column=0, sticky='w', ipadx=10)
+        tk.Label(master=self, text='кг').grid(row=2, column=2, sticky='ew')
+        tk.Label(master=self, text='км').grid(row=3, column=2, sticky='ew')
 
     def _add_speed_interface(self):
         speed_frame = tk.LabelFrame(master=self, text='Скорость:')
@@ -73,7 +77,7 @@ class CometFrame(tk.Frame):
         tk.Label(master=speed_frame, text='км/с').grid(row=0, column=2, sticky='ew')
         tk.Label(master=speed_frame, text='км/с').grid(row=1, column=2, sticky='ew')
 
-        speed_frame.grid(row=4, column=0, columnspan=3, sticky='news')
+        speed_frame.grid(row=5, column=0, columnspan=3, sticky='news')
 
     def _add_position_interface(self):
         position_frame = tk.LabelFrame(master=self, text='Расстояние от Солнца:')
@@ -94,13 +98,14 @@ class CometFrame(tk.Frame):
         tk.Label(master=position_frame, text='км').grid(row=0, column=2, sticky='ew')
         tk.Label(master=position_frame, text='км').grid(row=1, column=2, sticky='ew')
 
-        position_frame.grid(row=6, column=0, columnspan=3, sticky='news')
+        position_frame.grid(row=7, column=0, columnspan=3, sticky='news')
 
     def _add_button(self):
-        tk.Button(master=self, text='Старт', command=self._add_celectial_body).grid(row=8, column=1, sticky='news')
+        tk.Button(master=self, text='Старт', command=self._add_celestial_body).grid(row=9, column=1, sticky='news')
 
-    def _add_celectial_body(self):
+    def _add_celestial_body(self):
         try:
+            name = self._name.get()
             weight = int(self._weight.get())
             radius = int(self._radius.get())
             speed_x = float(self._speed_x.get())
@@ -108,7 +113,7 @@ class CometFrame(tk.Frame):
             x = float(self._x.get()) + STATE.solar_system.star.x
             y = float(self._y.get()) + STATE.solar_system.star.y
 
-            STATE.solar_system.add_comet('white', weight, radius, x, y, speed_x, speed_y)
+            STATE.solar_system.add_comet(name, 'white', weight, radius, x, y, speed_x, speed_y)
 
             self._delete_text()
         except ValueError:
