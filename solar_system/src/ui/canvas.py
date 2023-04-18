@@ -22,6 +22,9 @@ class Canvas(tk.Canvas):
         self._drawn_names_ids = {}
         self._drawn_bodies_coordinates = {}
 
+        self._axis_ids = None
+        self._axis_coordinates = None
+
         self.bind("<Key>", self._move_camera)
         self.bind('<Button-1>', self._focus_to_canvas)
 
@@ -97,6 +100,40 @@ class Canvas(tk.Canvas):
 
         for body in STATE.solar_system.bodies:
             self._draw_body(body, w_center, h_center)
+
+        self._draw_axis(w_center, h_center)
+
+    def _draw_axis(self, w_center: int, h_center: int):
+        star = STATE.solar_system.star
+        coordinates = self._get_body_coordinates(star, w_center, h_center)
+        if self._axis_coordinates != coordinates:
+            self._axis_coordinates = coordinates
+
+            x = coordinates[0] + (coordinates[2] - coordinates[0]) / 2
+            y = coordinates[1] + (coordinates[3] - coordinates[1]) / 2
+
+            if self._axis_ids:
+                self.coords(self._axis_ids['x_text'], x + 35, y - 10)
+                self.coords(self._axis_ids['x'], x, y, x + 40, y)
+                self.coords(self._axis_ids['x_'], x + 40, y, x + 35, y + 5)
+                self.coords(self._axis_ids['_x'], x + 40, y, x + 35, y - 5)
+
+                self.coords(self._axis_ids['y_text'], x - 10, y + 35)
+                self.coords(self._axis_ids['y'], x, y, x, y + 40)
+                self.coords(self._axis_ids['y_'], x, y + 40, x - 5, y + 35)
+                self.coords(self._axis_ids['_y'], x, y + 40, x + 5, y + 35)
+            else:
+                self._axis_ids = {
+                    'x_text': self.create_text(x + 35, y - 10, text='x', fill='red'),
+                    'x': self.create_line(x, y, x + 40, y, fill='red'),
+                    'x_': self.create_line(x + 40, y, x + 35, y + 5, fill='red'),
+                    '_x': self.create_line(x + 40, y, x + 35, y - 5, fill='red'),
+
+                    'y_text': self.create_text(x - 10, y + 35, text='y', fill='red'),
+                    'y': self.create_line(x, y, x, y + 40, fill='red'),
+                    'y_': self.create_line(x, y + 40, x - 5, y + 35, fill='red'),
+                    '_y': self.create_line(x, y + 40, x + 5, y + 35, fill='red')
+                }
 
     def _draw_body(self, body: CelestialBody, w_center: int, h_center: int):
 
