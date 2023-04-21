@@ -21,6 +21,11 @@ MARS = CelestialBody('Mars', 'red', 6.42 * 10 ** 23, 3390, 249232000, 0, 0, -21.
 PHOBOS = CelestialBody('Phobos', 'white', 1.072 * 10 ** 16, 11, 249241376, 0, 0, -24.1)
 DEIMOS = CelestialBody('Deimos', 'white', 1.4762 * 10 ** 15, 6, 249208538, 0, 0, -20.6187)
 
+JUPITER = CelestialBody('Jupiter', 'orange', 1.8982 * 10 ** 27, 71492, -740595000, 0, 0, 13.72)  # https://en.wikipedia.org/wiki/Jupiter
+SATURN = CelestialBody('Saturn', '#F5F5DC', 5.6834 * 10 ** 26, 58232, 0, -1506527000, -9.14, 0)  # https://en.wikipedia.org/wiki/Saturn
+URANUS = CelestialBody('Uranus', 'blue', 86.811 * 10 ** 24, 25559, 0, 2732696000, 7.13, 0)  # https://en.wikipedia.org/wiki/Uranus
+NEPTUNE = CelestialBody('Neptune', '#00008B', 102.409 * 10 ** 24, 24764, 0, 4471050000, 5.47, 0)  # https://en.wikipedia.org/wiki/Neptune
+
 
 class SolarSystem(ObjectState):
     """ A base class that describes our Solar system with all planets """
@@ -35,7 +40,7 @@ class SolarSystem(ObjectState):
         self._g_weights = 0
 
         self._star = SUN
-        self._planets = [MERCURY, VENUS, EARTH, MOON, MARS, PHOBOS, DEIMOS]
+        self._planets = [MERCURY, VENUS, EARTH, MOON, MARS, PHOBOS, DEIMOS, JUPITER, SATURN, URANUS, NEPTUNE]
         self._comets = []
 
     @property
